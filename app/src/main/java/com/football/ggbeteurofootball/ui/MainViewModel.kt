@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 object MainViewModel: ViewModel() {
 
     val days = mutableListOf<ItemDay>()
-    val listLoadedFootball = mutableListOf<Football?>()
+    val listLoadedFootball = MutableList<Football?>(7){null}
 
     val currentDayMatches = mutableListOf<Response>()
     var currentDay = -1

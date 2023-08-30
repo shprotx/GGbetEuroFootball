@@ -59,15 +59,20 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun getFootballData() {
-        viewModel.days.forEach { itemDay ->
+        Log.d(TAG, "getFootballData viewModel.days: ${viewModel.days}")
+
+        var countLoadedFootball = 0
+
+        viewModel.days.forEachIndexed { index, itemDay ->
             Log.d(TAG, "getFootballData:  outside coroutine ${itemDay.date}")
             CoroutineScope(Dispatchers.IO).launch{
                 footballApiImplementation.getFootballByDate(itemDay.date){
                     Log.d(TAG, "getFootballData: ${itemDay.date}")
-                    viewModel.listLoadedFootball.add(it)
 
+                    viewModel.listLoadedFootball.add(index, it)
+                    countLoadedFootball++
                     //AllData loaded
-                    if (listLoadedFootball.size == 7)
+                    if (countLoadedFootball == 7)
                         isAllDataCollected = true
 
                 }
