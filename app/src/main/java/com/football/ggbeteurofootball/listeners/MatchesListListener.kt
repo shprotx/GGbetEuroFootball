@@ -4,6 +4,6 @@ interface MatchesListListener {
 
     fun onAnotherDaySelected(day: Int)
 
-    fun onMatchClicked(id: Int, position: Int)
+    fun onMatchClicked(id: Int, type: Int)
 
 }

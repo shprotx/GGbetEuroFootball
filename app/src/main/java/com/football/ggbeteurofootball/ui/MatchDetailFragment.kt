@@ -1,6 +1,8 @@
 package com.football.ggbeteurofootball.ui
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +12,13 @@ import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.adapters.AdapterMatchWithoutStatistic
 import com.football.ggbeteurofootball.data.ItemH2H
 import com.football.ggbeteurofootball.databinding.FragmentMatchDetailedBinding
+import com.football.ggbeteurofootball.models.Response
 
 class MatchDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentMatchDetailedBinding
     private val viewModel = MainViewModel
+    private val TAG = "MatchDetailFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +33,7 @@ class MatchDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel.currentDayMatches[viewModel.currentMatchPosition].type == 2)
+        if (viewModel.currentType == 2)
             showWithStatistic()
         else
             showWithH2H()
@@ -54,8 +58,11 @@ class MatchDetailFragment : Fragment() {
 
 
     private fun showWithH2H() {
+        var response: Response? = viewModel.currentDayMatches.find { it.fixture.id == viewModel.currentMatchId }
+        Log.d(TAG, "showWithH2H: ${response!!.teams.home.logo}")
+        Log.d(TAG, "showWithH2H: ${response!!.teams.away.logo}")
         val adapter = AdapterMatchWithoutStatistic(
-            listOf<ItemH2H>(), viewModel.currentDayMatches[viewModel.currentMatchPosition])
+            listOf<ItemH2H>(), response!!, viewModel.currentType)
         binding.recyclerMatchDetail.adapter = adapter
     }
 

@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.ui
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,7 +37,7 @@ class MatchesFragment : Fragment(), MatchesListListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectMatchesForSelectedDay(3) // current day position is 3
+        collectMatchesForSelectedDay(viewModel.currentDay) // current day position is 3
         recycler()
         listeners()
 
@@ -60,55 +61,51 @@ class MatchesFragment : Fragment(), MatchesListListener {
     }
 
 
-
-
-
-
-
-
-
+    /**
+     *  Метод нужен для сортировки списка перед передачей его ресайклеру. Задаются приоритеты на
+     *  основании категорий, ожидаемых от АПИ. Потом список для конкретного дня сортируется по этим
+     *  приоритетам и сохраняется во вьюМодел.
+     */
     private fun collectMatchesForSelectedDay(day: Int) {
         if (viewModel.listLoadedFootball.isNotEmpty()) {
             viewModel.currentDayMatches.clear()
 
-            for (i in 0 until viewModel.listLoadedFootball[day]!!.results) {
-                val item = viewModel.listLoadedFootball[day]!!.response[i]
-                val id = item.fixture.id
-                val type = when (item.fixture.status.short) {
-                                "NS" -> 3
-                                "TBD" -> 3
-                                "PST" -> 3
-                                "CANC" -> 3
-                                "ABD" -> 3
-                                "AWD" -> 3
-                                "WO" -> 3
-                                "FT" -> 2
-                                "AET" -> 2
-                                "PEN" -> 2
-                                else -> 1
-                }
-                val league = item.league.name
-                val homeTeamLogo = item.teams.home.logo
-                val homeTeamName = item.teams.home.name
-                val homeTeamScore = item.goals.home
-                val awayTeamLogo = item.teams.away.logo
-                val awayTeamName = item.teams.away.name
-                val awayTeamScore = item.goals.away
-                viewModel.currentDayMatches.add(
-                    ItemMatch(
-                        id,
-                        type,
-                        league,
-                        homeTeamLogo,
-                        homeTeamName,
-                        homeTeamScore,
-                        awayTeamLogo,
-                        awayTeamName,
-                        awayTeamScore
-                    )
-                )
+            val prioritiesMap = mutableMapOf<Int, Int>()
+            val abbreviationPriorities = mapOf(
+                "TBD" to 3,
+                "NS" to 3,
+                "1H" to 1,
+                "HT" to 1,
+                "2H" to 1,
+                "ET" to 1,
+                "BT" to 1,
+                "SUSP" to 1,
+                "INT" to 1,
+                "FT" to 2,
+                "AET" to 2,
+                "PEN" to 2,
+                "PST" to 3,
+                "CANC" to 3,
+                "ABD" to 3,
+                "AWD" to 3,
+                "WO" to 3,
+                "LIVE" to 1,
+                "P" to 1
+            )
+            for (data in viewModel.listLoadedFootball[day]!!.response) {
+                val status = data.fixture.status.short
+
+                val priority = abbreviationPriorities.entries.firstOrNull { entry ->
+                    status.contains(entry.key, ignoreCase = true)
+                }?.value ?: 0
+                prioritiesMap[data.fixture.id] = priority
             }
-            viewModel.currentDayMatches.sortBy { it.type }
+
+            val sortedList = viewModel.listLoadedFootball[day]!!.response.sortedBy{
+                prioritiesMap[it.fixture.id]
+            }
+            viewModel.currentDayMatches.addAll(sortedList)
+            viewModel.currentPriorityMap = prioritiesMap
         }
     }
 
@@ -121,7 +118,11 @@ class MatchesFragment : Fragment(), MatchesListListener {
 
     private fun recycler() {
         val layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdapterMatches(viewModel.currentDayMatches, viewModel.days, this)
+        adapter = AdapterMatches(
+            viewModel.currentDayMatches,
+            viewModel.days,
+            this,
+            viewModel.currentPriorityMap)
         binding.recyclerMatches.adapter = adapter
         binding.recyclerMatches.layoutManager = layoutManager
         binding.recyclerMatches.setOnScrollChangeListener { _, _, _, _, _ ->
@@ -138,7 +139,8 @@ class MatchesFragment : Fragment(), MatchesListListener {
 
     override fun onAnotherDaySelected(day: Int) {
         collectMatchesForSelectedDay(day)
-        adapter.setNewList(viewModel.currentDayMatches, day)
+        viewModel.currentDay = day
+        adapter.setNewList(viewModel.currentDayMatches, day, viewModel.currentPriorityMap)
     }
 
 
@@ -147,8 +149,9 @@ class MatchesFragment : Fragment(), MatchesListListener {
 
 
 
-    override fun onMatchClicked(id: Int, position: Int) {
-        viewModel.currentMatchPosition = position
+    override fun onMatchClicked(id: Int, type: Int) {
+        viewModel.currentMatchId = id
+        viewModel.currentType = type
         findNavController().navigate(R.id.matchDetailFragment)
     }
 

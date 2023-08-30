@@ -1,7 +1,6 @@
 package com.football.ggbeteurofootball.ui
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
@@ -29,6 +28,7 @@ class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val viewModel = MainViewModel
     private var isAllDataCollected = false
+    private var TAG = "SplashActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class SplashActivity : AppCompatActivity() {
                 if (!isAllDataCollected) delay(1000)
                 else delay(10)
             }
-            Log.d(TAG, "Splash Activity: ${viewModel.listLoadedFootball.size}")
+            viewModel.currentDay = 3
             startActivity(Intent(this@SplashActivity, MainActivity::class.java))
         }
 
@@ -60,6 +60,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun getFootballData() {
         viewModel.days.forEach { itemDay ->
+            Log.d(TAG, "getFootballData:  outside coroutine ${itemDay.date}")
             CoroutineScope(Dispatchers.IO).launch{
                 footballApiImplementation.getFootballByDate(itemDay.date){
                     Log.d(TAG, "getFootballData: ${itemDay.date}")
@@ -73,6 +74,7 @@ class SplashActivity : AppCompatActivity() {
             }
         }
     }
+
 
 
 

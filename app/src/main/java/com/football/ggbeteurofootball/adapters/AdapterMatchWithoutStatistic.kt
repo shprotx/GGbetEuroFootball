@@ -1,6 +1,8 @@
 package com.football.ggbeteurofootball.adapters
 
 import android.graphics.Color
+import android.icu.text.SimpleDateFormat
+import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -15,11 +17,14 @@ import com.football.ggbeteurofootball.databinding.ItemDayBinding
 import com.football.ggbeteurofootball.databinding.ItemH2hBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.listeners.MatchesListListener
+import com.football.ggbeteurofootball.models.Response
 import com.squareup.picasso.Picasso
+import java.util.Locale
 
 class AdapterMatchWithoutStatistic(
     private var dataList: List<ItemH2H>,
-    private val match: ItemMatch,
+    private val response: Response,
+    private val type: Int
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -64,7 +69,7 @@ class AdapterMatchWithoutStatistic(
             val dataItem = dataList[position - 1]
             holder.bind(dataItem)
         } else if (holder is FixedViewHolder)
-            holder.bind(match)
+            holder.bind(response)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -98,25 +103,25 @@ class AdapterMatchWithoutStatistic(
         private val secondTeamStatus = b.secondTeamStatus
         private val light = b.light
 
-        fun bind(item: ItemMatch) {
-            league.text = item.league
+        fun bind(item: Response) {
+            league.text = item.league.name
 
-            if (item.firstTeamIcon.isEmpty())
+            if (item.teams.home.logo.isEmpty())
                 firstTeamIcon.setImageResource(R.drawable.logo_placeholder)
             else
-                Picasso.get().load(item.firstTeamIcon).into(firstTeamIcon)
+                Picasso.get().load(item.teams.home.logo).into(firstTeamIcon)
 
-            if (item.secondTeamIcon.isEmpty())
+            if (item.teams.away.logo.isEmpty())
                 secondTeamIcon.setImageResource(R.drawable.logo_placeholder__1_)
             else
-                Picasso.get().load(item.secondTeamIcon).into(secondTeamIcon)
+                Picasso.get().load(item.teams.away.logo).into(secondTeamIcon)
 
-            firstTeamName.text = item.firstTeamName
-            secondTeamName.text = item.secondTeamName
-            firstTeamScore.text = if (item.type != 3) "${item.firstTeamScore}" else "-"
-            secondTeamScore.text = if (item.type != 3) "${item.secondTeamScore}" else "-"
+            firstTeamName.text = item.teams.home.name
+            secondTeamName.text = item.teams.away.name
+            firstTeamScore.text = if (item.goals.home != null) "${item.goals.home}" else "-"
+            secondTeamScore.text = if (item.goals.away != null) "${item.goals.away}" else "-"
 
-            if (item.type != 3) {
+            if (type != 3) {
                 firstTeamStatus.setImageResource(R.drawable.status_green)
                 secondTeamStatus.setImageResource(R.drawable.status_red)
             } else {
@@ -124,16 +129,25 @@ class AdapterMatchWithoutStatistic(
                 secondTeamStatus.setImageResource(R.drawable.status_dark)
             }
 
-            when (item.type) {
+            when (type) {
                 1 -> {
                     status.text = "● Live"
                     status.setTextColor(Color.parseColor("#FE8001"))
                     light.isVisible = true
                 }
                 2 -> status.text = "Finished"
-                3 -> status.text = "16:30"
+                3 -> status.text = getMatchTime(item.fixture.date)
             }
 
+        }
+
+
+        private fun getMatchTime(date: String): String {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+            val parsedDate = dateFormat.parse(date)
+            val calendar = Calendar.getInstance().apply { time = parsedDate }
+            return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(
+                Calendar.MINUTE))
         }
     }
 

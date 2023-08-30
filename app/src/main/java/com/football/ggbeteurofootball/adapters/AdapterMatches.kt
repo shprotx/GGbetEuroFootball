@@ -1,6 +1,8 @@
 package com.football.ggbeteurofootball.adapters
 
 import android.graphics.Color
+import android.icu.text.SimpleDateFormat
+import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,12 +15,16 @@ import com.football.ggbeteurofootball.databinding.ItemDatesBinding
 import com.football.ggbeteurofootball.databinding.ItemDayBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.listeners.MatchesListListener
+import com.football.ggbeteurofootball.models.Football
+import com.football.ggbeteurofootball.models.Response
 import com.squareup.picasso.Picasso
+import java.util.Locale
 
 class AdapterMatches(
-    private var dataList: List<ItemMatch>,
+    private var response: MutableList<Response>,
     private val days: List<ItemDay>,
-    private val listener: MatchesListListener
+    private val listener: MatchesListListener,
+    private var priorityMap: MutableMap<Int, Int>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -61,7 +67,7 @@ class AdapterMatches(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MatchViewHolder) {
-            val dataItem = dataList[position - 1]
+            val dataItem = response[position - 1]
             holder.bind(dataItem)
         } else if (holder is FixedViewHolder)
             holder.bind()
@@ -76,12 +82,13 @@ class AdapterMatches(
     }
 
     override fun getItemCount(): Int {
-        return dataList.size + 1
+        return response.size + 1
     }
 
-    fun setNewList(list: List<ItemMatch>, day: Int) {
-        dataList = list
+    fun setNewList(list: MutableList<Response>, day: Int, map: MutableMap<Int, Int>) {
+        response = list
         selectedDay = day
+        priorityMap = map
         notifyDataSetChanged()
     }
 
@@ -146,25 +153,25 @@ class AdapterMatches(
         private val light = b.light
         private val matchCard = b.matchCard
 
-        fun bind(item: ItemMatch) {
-            league.text = item.league
+        fun bind(item: Response) {
+            league.text = item.league.name
 
-            if (item.firstTeamIcon.isEmpty())
+            if (item.teams.home.logo.isEmpty())
                 firstTeamIcon.setImageResource(R.drawable.logo_placeholder)
             else
-                Picasso.get().load(item.firstTeamIcon).into(firstTeamIcon)
+                Picasso.get().load(item.teams.home.logo).into(firstTeamIcon)
 
-            if (item.secondTeamIcon.isEmpty())
+            if (item.teams.away.logo.isEmpty())
                 secondTeamIcon.setImageResource(R.drawable.logo_placeholder__1_)
             else
-                Picasso.get().load(item.secondTeamIcon).into(secondTeamIcon)
+                Picasso.get().load(item.teams.away.logo).into(secondTeamIcon)
 
-            firstTeamName.text = item.firstTeamName
-            secondTeamName.text = item.secondTeamName
-            firstTeamScore.text = if (item.type != 3) "${item.firstTeamScore}" else "-"
-            secondTeamScore.text = if (item.type != 3) "${item.secondTeamScore}" else "-"
+            firstTeamName.text = item.teams.home.name
+            secondTeamName.text = item.teams.away.name
+            firstTeamScore.text = if (item.goals.home != null) "${item.goals.home}" else "-"
+            secondTeamScore.text = if (item.goals.away != null) "${item.goals.away}" else "-"
 
-            if (item.type != 3) {
+            if (priorityMap.get(item.fixture.id) != 3) {
                 firstTeamStatus.setImageResource(R.drawable.status_green)
                 secondTeamStatus.setImageResource(R.drawable.status_red)
             } else {
@@ -172,19 +179,27 @@ class AdapterMatches(
                 secondTeamStatus.setImageResource(R.drawable.status_dark)
             }
 
-            when (item.type) {
+            when (priorityMap[item.fixture.id]) {
                 1 -> {
                     status.text = "● Live"
                     status.setTextColor(Color.parseColor("#FE8001"))
                     light.isVisible = true
                 }
                 2 -> status.text = "Finished"
-                3 -> status.text = "16:30"
+                3 -> status.text = getMatchTime(item.fixture.date)
             }
 
             matchCard.setOnClickListener {
-                listener.onMatchClicked(item.id, adapterPosition)
+                listener.onMatchClicked(item.fixture.id, priorityMap[item.fixture.id]!!)
             }
+        }
+
+
+        private fun getMatchTime(date: String): String {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+            val parsedDate = dateFormat.parse(date)
+            val calendar = Calendar.getInstance().apply { time = parsedDate }
+            return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
         }
     }
 }
