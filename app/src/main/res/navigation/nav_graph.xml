@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/matchesFragment">
+
+    <fragment
+        android:id="@+id/matchesFragment"
+        android:name="com.football.ggbeteurofootball.ui.MatchesFragment"
+        android:label="      GG Matches"
+        tools:layout="@layout/fragment_matches" />
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.football.ggbeteurofootball.ui.FavoritesFragment"
+        android:label="FavoritesFragment" />
+    <fragment
+        android:id="@+id/matchDetailFragment"
+        android:name="com.football.ggbeteurofootball.ui.MatchDetailFragment"
+        android:label="fragment_match_detailed"
+        tools:layout="@layout/fragment_match_detailed" />
+</navigation>

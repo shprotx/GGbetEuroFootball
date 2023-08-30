@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="7"
+    android:layout_height="64dp">
+
+    <include layout="@layout/item_day" android:id="@+id/d1" />
+    <include layout="@layout/item_day" android:id="@+id/d2" />
+    <include layout="@layout/item_day" android:id="@+id/d3" />
+    <include layout="@layout/item_day" android:id="@+id/d4" />
+    <include layout="@layout/item_day" android:id="@+id/d5" />
+    <include layout="@layout/item_day" android:id="@+id/d6" />
+    <include layout="@layout/item_day" android:id="@+id/d7" />
+
+</LinearLayout>

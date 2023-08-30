@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Pages">
+        <menu>
+            <group android:checkableBehavior= "single" >
+                <item
+                    android:id= "@+id/matchesFragment"
+                    android:icon= "@drawable/menu_ball"
+                    android:title= "GG Matches" />
+                <item
+                    android:id= "@+id/favoritesFragment"
+                    android:icon= "@drawable/menu_ball"
+                    android:title= "Favorite" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title= "Settings">
+        <menu>
+            <item
+                android:id= "@+id/privacy"
+                android:icon= "@drawable/menu_ball"
+                android:title= "Privacy Policy" />
+            <item
+                android:id= "@+id/clearCash"
+                android:icon= "@drawable/menu_ball"
+                android:title= "Clear Cache" />
+        </menu>
+    </item>
+
+</menu>
