@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.net.ConnectivityManager
@@ -41,6 +42,7 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        changeOrientation()
         hideNavigationBar()
         initProgressBar()
         getDataFromInternet()
@@ -230,6 +232,16 @@ class SplashActivity : AppCompatActivity() {
                 viewModel.days.add(ItemDay(dateString, dayOfWeek, dayOfMonth))
             }
         }
+    }
 
+
+
+
+
+
+
+    private fun changeOrientation() {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
     }
 }

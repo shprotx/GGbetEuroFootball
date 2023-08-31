@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.ui
 
 import android.content.SharedPreferences.Editor
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.findNavController
@@ -23,7 +24,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        changeOrientation()
+        navigationBehaviour()
 
+    }
+
+
+
+
+
+
+
+    private fun navigationBehaviour() {
         binding.navView.setNavigationItemSelectedListener { item ->
             if (item.itemId == R.id.matchesFragment ||
                 item.itemId == R.id.favoritesFragment)
@@ -45,5 +57,16 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+
+
+
+
+
+
+    private fun changeOrientation() {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
     }
 }
