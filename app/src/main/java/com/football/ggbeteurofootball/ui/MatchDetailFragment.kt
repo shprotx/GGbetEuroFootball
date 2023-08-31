@@ -74,10 +74,13 @@ class MatchDetailFragment : Fragment() {
 
 
     private fun initResponse(): Response? {
+        var response: Response? = null
         for (match in viewModel.listLoadedFootball) {
-            return match?.response?.find { it.fixture.id == viewModel.currentMatchId }
+            response =  match?.response?.find { it.fixture.id == viewModel.currentMatchId }
+            if (response != null)
+                break
         }
-        return null
+        return response
     }
 
 

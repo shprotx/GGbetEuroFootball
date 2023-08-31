@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">GGbet EuroFootball</string>
+    <string name="menu">Menu</string>
+    <string name="clear_cash">Clear Cash?</string>
+    <string name="all_saved_data_will_be_lost_are_you_sure">All saved data will be lost. Are you sure?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="oops_ninternet_connection_is_lost_pull_to_refresh">Oops!\n\\nInternet connection is lost. Pull to refresh</string>
+    <string name="favorites">Favorites</string>
+    <string name="open_menu">Open Menu</string>
+    <string name="you_haven_t_added_any_matches_yet">You haven\'t added any matches yet</string>
+    <string name="scroll_to_top">Scroll to top</string>
+    <string name="to_all_matches">To All Matches</string>
+    <string name="gg_matches">GG Matches</string>
+    <string name="finished">Finished</string>
+    <string name="live">Live</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="ball_possession">Ball Possession</string>
 </resources>

@@ -31,21 +31,15 @@
 
             <TextView
                 android:id="@+id/leagueName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_400"
+                style="@style/AppTextRegular"
                 android:text="League name"
-                android:textColor="@color/textColor"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_400"
+                style="@style/AppTextRegular"
                 android:text="Finished"
-                android:textColor="@color/textColor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,10 +54,8 @@
 
             <TextView
                 android:id="@+id/firstTeamName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/AppTextRegular"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/roboto_400"
                 android:text="Team Name"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/firstTeamIcon"
@@ -80,10 +72,8 @@
 
             <TextView
                 android:id="@+id/secondTeamName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/AppTextRegular"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/roboto_400"
                 android:text="Team Name"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/secondTeamIcon"
@@ -110,26 +100,18 @@
 
             <TextView
                 android:id="@+id/firstTeamScore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/AppTextSemiBold"
                 android:layout_marginEnd="8dp"
-                android:fontFamily="@font/roboto_600"
                 android:text="2"
-                android:textColor="@color/white"
-                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="@id/firstTeamStatus"
                 app:layout_constraintEnd_toStartOf="@id/firstTeamStatus"
                 app:layout_constraintTop_toTopOf="@id/firstTeamStatus" />
 
             <TextView
                 android:id="@+id/secondTeamScore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/AppTextSemiBold"
                 android:layout_marginEnd="8dp"
-                android:fontFamily="@font/roboto_600"
                 android:text="0"
-                android:textColor="@color/white"
-                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="@id/secondTeamStatus"
                 app:layout_constraintEnd_toStartOf="@id/secondTeamStatus"
                 app:layout_constraintTop_toTopOf="@id/secondTeamStatus" />

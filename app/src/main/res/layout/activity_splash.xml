@@ -32,5 +32,17 @@
             android:progressTint="@color/blue"
             app:layout_constraintTop_toBottomOf="@id/logoGg" />
 
+        <TextView
+            android:id="@+id/noInternetText"
+            style="@style/AppTextRegular"
+            android:layout_width="0dp"
+            android:layout_marginTop="45dp"
+            android:gravity="center_horizontal"
+            android:text="@string/oops_ninternet_connection_is_lost_pull_to_refresh"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logoGg" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

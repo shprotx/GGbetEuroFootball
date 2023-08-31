@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTextRegular" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto_400</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTextSemiBold" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto_600</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="FavoriteButtonStyle" parent="ThemeOverlay.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:fontFamily">@font/roboto_400</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginHorizontal">4dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/layer1</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+</resources>

@@ -25,13 +25,10 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        style="@style/AppTextSemiBold"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_600"
         android:gravity="center_horizontal"
-        android:text="GG Matches"
-        android:textColor="@color/white"
-        android:textSize="18sp"
+        android:text="@string/gg_matches"
         app:layout_constraintBottom_toBottomOf="@id/drawerButton"
         app:layout_constraintTop_toTopOf="@id/drawerButton" />
 
@@ -48,8 +45,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMatches"
         android:layout_width="match_parent"
-        android:paddingTop="16dp"
         android:layout_height="0dp"
+        android:paddingTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appBar"

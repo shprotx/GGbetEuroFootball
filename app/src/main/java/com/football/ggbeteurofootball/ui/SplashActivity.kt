@@ -8,8 +8,9 @@ import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.football.ggbeteurofootball.api.FootballApiImplementation
 import com.football.ggbeteurofootball.data.ItemDay
@@ -40,9 +41,43 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        hideNavigationBar()
+        initProgressBar()
+        getDataFromInternet()
+        determinePlaceholders()
+        getDataFromPrefs()
+        determineDates()
+        getFootballData()
+        listeners()
+
+    }
+
+
+
+
+
+
+    private fun hideNavigationBar() {
+        val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        window.decorView.systemUiVisibility = flags
+    }
+
+
+
+
+
+
+    private fun initProgressBar() {
         binding.progressBar.progress = 0
         binding.progressBar.max = 100
+    }
 
+
+
+
+
+
+    private fun getDataFromInternet() {
         lifecycleScope.launch {
             for (i in 0..100) {
                 binding.progressBar.progress = i
@@ -53,14 +88,13 @@ class SplashActivity : AppCompatActivity() {
 
             if (checkInternet())
                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            else {
+                binding.noInternetText.isVisible = true
+                binding.swipeLayout.isRefreshing = false
+                isAllDataCollected = false
+            }
+
         }
-
-        determinePlaceholders()
-        getDataFromPrefs()
-        determineDates()
-        getFootballData()
-        listeners()
-
     }
 
 
@@ -90,7 +124,10 @@ class SplashActivity : AppCompatActivity() {
     
     private fun listeners() {
         binding.swipeLayout.setOnRefreshListener {
-            Log.d(TAG, "listeners: swipe happened")
+            binding.noInternetText.isVisible = false
+            determinePlaceholders()
+            getFootballData()
+            getDataFromInternet()
         }
     }
 

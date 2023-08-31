@@ -1,41 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="44dp"
     android:background="@color/background">
 
     <TextView
         android:id="@+id/title"
+        style="@style/AppTextRegular"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_400"
         android:gravity="center_horizontal"
-        android:text="Shots on Goal"
         android:textColor="@color/white"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Shots on Goal" />
 
     <TextView
         android:id="@+id/homeValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/AppTextRegular"
         android:layout_marginStart="16dp"
-        android:fontFamily="@font/roboto_400"
-        android:text="5"
-        android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="5" />
 
     <TextView
         android:id="@+id/awayValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/AppTextRegular"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/roboto_400"
-        android:text="2"
-        android:textColor="@color/textColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2" />
 
     <View
         android:id="@+id/guideline"
@@ -50,9 +44,9 @@
         android:layout_width="0dp"
         android:layout_height="8dp"
         android:layout_marginBottom="8dp"
-        android:rotation="180"
         android:progressBackgroundTint="@color/layer2"
         android:progressTint="@color/green"
+        android:rotation="180"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintStart_toStartOf="@id/homeValue" />
