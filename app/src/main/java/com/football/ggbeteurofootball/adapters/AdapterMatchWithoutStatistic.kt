@@ -147,6 +147,9 @@ class AdapterMatchWithoutStatistic(
             }
 
 
+            light.isVisible = false
+            status.setTextColor(Color.parseColor("#757A87"))
+
             when (type) {
                 1 -> {
                     status.text = "● Live"
@@ -155,6 +158,8 @@ class AdapterMatchWithoutStatistic(
                 }
                 2 -> status.text = "Finished"
                 3 -> status.text = getMatchTime(item.fixture.date)
+                4 -> status.text = "Postponed"
+                5 -> status.text = "Cancelled"
             }
 
         }

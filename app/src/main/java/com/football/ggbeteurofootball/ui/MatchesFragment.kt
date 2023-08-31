@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,10 +95,10 @@ class MatchesFragment : Fragment(), MatchesSelectedListener, DaySelectedListener
             } else {
                 for (data in viewModel.listLoadedFootball[day]?.response!!) {
                     val status = data.fixture.status.short
-
                     val priority = abbreviationPriorities.entries.firstOrNull { entry ->
-                        status.contains(entry.key, ignoreCase = true)
+                        status == entry.key
                     }?.value ?: 0
+
                     prioritiesMap[data.fixture.id] = priority
                 }
 
@@ -138,23 +139,11 @@ class MatchesFragment : Fragment(), MatchesSelectedListener, DaySelectedListener
         }
     }
 
-
-
-
-
-
-
     override fun onAnotherDaySelected(day: Int) {
         collectMatchesForSelectedDay(day)
         viewModel.currentDay = day
         adapter.setNewList(viewModel.currentDayMatches, day, viewModel.currentPriorityMap)
     }
-
-
-
-
-
-
 
     override fun onMatchClicked(id: Int, type: Int) {
         viewModel.currentMatchId = id

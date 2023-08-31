@@ -108,32 +108,32 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
     private fun getPriorityMap(): MutableMap<Int, Int> {
         val prioritiesMap = mutableMapOf<Int, Int>()
         val abbreviationPriorities = mapOf(
-            "TBD" to 2,
-            "NS" to 2,
+            "TBD" to 3,
+            "NS" to 3,
             "1H" to 1,
             "HT" to 1,
             "2H" to 1,
             "ET" to 1,
             "BT" to 1,
+            "P" to 1,
             "SUSP" to 1,
             "INT" to 1,
-            "FT" to 3,
-            "AET" to 3,
-            "PEN" to 3,
-            "PST" to 2,
-            "CANC" to 2,
-            "ABD" to 2,
-            "AWD" to 2,
-            "WO" to 2,
-            "LIVE" to 1,
-            "P" to 1
+            "FT" to 2,
+            "AET" to 2,
+            "PEN" to 2,
+            "PST" to 4,
+            "CANC" to 5,
+            "ABD" to 5,
+            "AWD" to 5,
+            "WO" to 5,
+            "LIVE" to 1
         )
 
         for (data in favoriteMatches) {
             val status = data.fixture.status.short
 
             val priority = abbreviationPriorities.entries.firstOrNull { entry ->
-                status.contains(entry.key, ignoreCase = true)
+                status == entry.key
             }?.value ?: 0
             prioritiesMap[data.fixture.id] = priority
         }

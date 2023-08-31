@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -160,22 +161,19 @@ class AdapterFavorites(
                 secondTeamStatus.setImageResource(R.drawable.status_dark)
             }
 
+            light.isVisible = false
+            status.setTextColor(Color.parseColor("#757A87"))
+
             when (priorityMap[item.fixture.id]) {
                 1 -> {
                     status.text = "● Live"
                     status.setTextColor(Color.parseColor("#FE8001"))
                     light.isVisible = true
                 }
-                2 ->  {
-                    status.text = "Finished"
-                    status.setTextColor(Color.parseColor("#757A87"))
-                    light.isVisible = false
-                }
-                3 -> {
-                    status.text = getMatchTime(item.fixture.date)
-                    status.setTextColor(Color.parseColor("#757A87"))
-                    light.isVisible = false
-                }
+                2 -> status.text = "Finished"
+                3 -> status.text = getMatchTime(item.fixture.date)
+                4 -> status.text = "Postponed"
+                5 -> status.text = "Cancelled"
             }
 
             matchCard.setOnClickListener {
