@@ -6,9 +6,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.DialogCasheBinding
+import javax.inject.Inject
 
 class CasheDialog: DialogFragment() {
 
+    private val viewModel = MainViewModel
     private lateinit var binding: DialogCasheBinding
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -19,7 +21,10 @@ class CasheDialog: DialogFragment() {
         builder.setView(binding.root)
 
         binding.cancel.setOnClickListener { dismiss() }
-        binding.delete.setOnClickListener {  }
+        binding.delete.setOnClickListener {
+            viewModel.favoriteMatches.clear()
+            dismiss()
+        }
 
         return builder.create()
     }

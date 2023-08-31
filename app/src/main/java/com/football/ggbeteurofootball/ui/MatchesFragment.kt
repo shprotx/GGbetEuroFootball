@@ -1,6 +1,5 @@
 package com.football.ggbeteurofootball.ui
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.football.ggbeteurofootball.adapters.AdapterMatches
-import com.football.ggbeteurofootball.data.ItemDay
-import com.football.ggbeteurofootball.data.ItemMatch
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.FragmentMatchesBinding
 import com.football.ggbeteurofootball.listeners.MatchesListListener
@@ -92,20 +89,26 @@ class MatchesFragment : Fragment(), MatchesListListener {
                 "LIVE" to 1,
                 "P" to 1
             )
-            for (data in viewModel.listLoadedFootball[day]!!.response) {
-                val status = data.fixture.status.short
 
-                val priority = abbreviationPriorities.entries.firstOrNull { entry ->
-                    status.contains(entry.key, ignoreCase = true)
-                }?.value ?: 0
-                prioritiesMap[data.fixture.id] = priority
+            if (viewModel.listLoadedFootball[day] == null) {
+                findNavController().navigate(R.id.noInternetFragment)
+            } else {
+                for (data in viewModel.listLoadedFootball[day]?.response!!) {
+                    val status = data.fixture.status.short
+
+                    val priority = abbreviationPriorities.entries.firstOrNull { entry ->
+                        status.contains(entry.key, ignoreCase = true)
+                    }?.value ?: 0
+                    prioritiesMap[data.fixture.id] = priority
+                }
+
+                val sortedList = viewModel.listLoadedFootball[day]!!.response.sortedBy{
+                    prioritiesMap[it.fixture.id]
+                }
+                viewModel.currentDayMatches.addAll(sortedList)
+                viewModel.currentPriorityMap = prioritiesMap
             }
 
-            val sortedList = viewModel.listLoadedFootball[day]!!.response.sortedBy{
-                prioritiesMap[it.fixture.id]
-            }
-            viewModel.currentDayMatches.addAll(sortedList)
-            viewModel.currentPriorityMap = prioritiesMap
         }
     }
 
@@ -122,7 +125,9 @@ class MatchesFragment : Fragment(), MatchesListListener {
             viewModel.currentDayMatches,
             viewModel.days,
             this,
-            viewModel.currentPriorityMap)
+            viewModel.currentPriorityMap,
+            viewModel.currentDay
+        )
         binding.recyclerMatches.adapter = adapter
         binding.recyclerMatches.layoutManager = layoutManager
         binding.recyclerMatches.setOnScrollChangeListener { _, _, _, _, _ ->

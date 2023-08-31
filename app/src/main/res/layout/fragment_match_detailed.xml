@@ -49,6 +49,7 @@
         android:id="@+id/shareButton" />
 
     <ImageButton
+        android:id="@+id/favoriteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/star_unchecked"

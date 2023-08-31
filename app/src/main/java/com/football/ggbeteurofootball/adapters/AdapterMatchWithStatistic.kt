@@ -11,29 +11,34 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.data.ItemH2H
+import com.football.ggbeteurofootball.data.ItemStatisticHeader
 import com.football.ggbeteurofootball.databinding.ItemH2hBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
+import com.football.ggbeteurofootball.databinding.ItemStatisticBodyBinding
+import com.football.ggbeteurofootball.databinding.ItemStatisticHeaderBinding
 import com.football.ggbeteurofootball.databinding.ItemTitleBinding
 import com.football.ggbeteurofootball.models.Response
 import com.squareup.picasso.Picasso
 import java.util.Locale
 
-class AdapterMatchWithoutStatistic(
+class AdapterMatchWithStatistic(
     private val context: Context,
     private var dataList: List<ItemH2H>,
     private val response: Response,
-    private val type: Int
+    private val header: ItemStatisticHeader
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private lateinit var binding: ItemH2hBinding
+    private lateinit var binding: ItemStatisticBodyBinding
     private lateinit var binding1: ItemMatchBinding
     private lateinit var binding2: ItemTitleBinding
+    private lateinit var binding3: ItemStatisticHeaderBinding
 
     companion object {
         private const val VIEW_TYPE_FIXED = 0
         private const val VIEW_TYPE_NORMAL = 1
         private const val VIEW_TYPE_TITLE = 2
+        private const val VIEW_TYPE_HEADER = 3
     }
 
 
@@ -47,12 +52,17 @@ class AdapterMatchWithoutStatistic(
                 FixedViewHolder(binding1)
             }
             VIEW_TYPE_NORMAL -> {
-                binding = ItemH2hBinding.bind(inflater.inflate(R.layout.item_h2h, parent, false))
-                H2HHolder(binding)
+                binding = ItemStatisticBodyBinding.bind(inflater.inflate(R.layout.item_statistic_body, parent, false))
+                StatHolder(binding)
             }
             VIEW_TYPE_TITLE -> {
                 binding2 = ItemTitleBinding.bind(inflater.inflate(R.layout.item_title, parent, false))
                 TitleHolder(binding2)
+            }
+            VIEW_TYPE_HEADER -> {
+                binding3 = ItemStatisticHeaderBinding
+                    .bind(inflater.inflate(R.layout.item_statistic_header, parent, false))
+                HeaderHolder(binding3)
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -67,12 +77,13 @@ class AdapterMatchWithoutStatistic(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is H2HHolder -> {
+            is StatHolder -> {
                 val dataItem = dataList[position - 2]
                 holder.bind(dataItem)
             }
             is FixedViewHolder -> holder.bind(response)
             is TitleHolder -> holder.bind(dataList.size)
+            is HeaderHolder -> holder.bind(header)
         }
     }
 
@@ -81,13 +92,14 @@ class AdapterMatchWithoutStatistic(
         return when (position) {
             0 ->  VIEW_TYPE_FIXED
             1 ->  VIEW_TYPE_TITLE
+            2 -> VIEW_TYPE_HEADER
             else -> VIEW_TYPE_NORMAL
         }
     }
 
 
     override fun getItemCount(): Int {
-        return dataList.size + 2
+        return dataList.size + 3
     }
 
 
@@ -107,7 +119,6 @@ class AdapterMatchWithoutStatistic(
         private val secondTeamName = b.secondTeamName
         private val secondTeamScore = b.secondTeamScore
         private val secondTeamStatus = b.secondTeamStatus
-        private val light = b.light
 
         fun bind(item: Response) {
             league.text = item.league.name
@@ -143,26 +154,8 @@ class AdapterMatchWithoutStatistic(
                 secondTeamStatus.setImageResource(R.drawable.status_dark)
             }
 
+            status.text = "Finished"
 
-            when (type) {
-                1 -> {
-                    status.text = "● Live"
-                    status.setTextColor(Color.parseColor("#FE8001"))
-                    light.isVisible = true
-                }
-                2 -> status.text = "Finished"
-                3 -> status.text = getMatchTime(item.fixture.date)
-            }
-
-        }
-
-
-        private fun getMatchTime(date: String): String {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-            val parsedDate = dateFormat.parse(date)
-            val calendar = Calendar.getInstance().apply { time = parsedDate }
-            return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(
-                Calendar.MINUTE))
         }
     }
 
@@ -170,31 +163,15 @@ class AdapterMatchWithoutStatistic(
 
 
 
-    inner class H2HHolder(b: ItemH2hBinding) : RecyclerView.ViewHolder(b.root) {
-        private val homeTeamIcon = b.firstTeamIcon
-        private val awayTeamIcon = b.secondTeamIcon
-        private val homeTeamScore = b.firstTeamScore
-        private val awayTeamScore = b.secondTeamScore
-        private val date = b.dateText
-        private val homeTeamIndicator = b.firstTeamIndicator
-        private val awayTeamIndicator = b.secondTeamIndicator
+    inner class StatHolder(b: ItemStatisticBodyBinding) : RecyclerView.ViewHolder(b.root) {
+        private val title = b.title
+        private val homeNumber = b.homeValue
+        private val homeProgress = b.homeProgress
+        private val awayNumber = b.awayValue
+        private val awayProgress = b.awayProgress
 
         fun bind(item: ItemH2H) {
-            Picasso.get().load(item.homeTeamIcon).into(homeTeamIcon)
-            Picasso.get().load(item.awayTeamIcon).into(awayTeamIcon)
-            homeTeamScore.text = item.homeTeamScore.toString()
-            awayTeamScore.text = item.awayTeamScore.toString()
-            date.text = item.date
-            if (item.homeTeamScore > item.awayTeamScore) {
-                homeTeamIndicator.setImageResource(R.drawable.status_green)
-                awayTeamIndicator.setImageResource(R.drawable.status_red)
-            } else if (item.homeTeamScore < item.awayTeamScore) {
-                homeTeamIndicator.setImageResource(R.drawable.status_red)
-                awayTeamIndicator.setImageResource(R.drawable.status_green)
-            } else {
-                homeTeamIndicator.setImageResource(R.drawable.status_green)
-                awayTeamIndicator.setImageResource(R.drawable.status_green)
-            }
+
         }
     }
 
@@ -212,11 +189,33 @@ class AdapterMatchWithoutStatistic(
                 title.textSize = 14f
                 title.typeface = ResourcesCompat.getFont(context, R.font.roboto_400)
             } else {
-                title.text = "H2H"
+                title.text = "Statistic"
                 title.setTextColor(Color.WHITE)
                 title.textSize = 18f
                 title.typeface = ResourcesCompat.getFont(context, R.font.roboto_600)
             }
+        }
+    }
+
+
+
+
+
+
+    inner class HeaderHolder(b: ItemStatisticHeaderBinding): RecyclerView.ViewHolder(b.root) {
+        private val homeTeamIcon = b.homeStatIcon
+        private val awayTeamIcon = b.awayStatIcon
+        private val homeTeamProgress = b.homeProgress
+        private val awayTeamProgress = b.awayProgress
+        private val homeProgressPercent = b.homeProgressValue
+        private val awayProgressPercent = b.awayProgressValue
+        fun bind(item: ItemStatisticHeader) {
+            homeProgressPercent.text = "${item.homeProgressValue}%"
+            awayProgressPercent.text = "${item.awayProgressValue}%"
+            homeTeamProgress.progress = item.homeProgressValue
+            awayTeamProgress.progress = item.awayProgressValue
+            Picasso.get().load(response.teams.home.logo).into(homeTeamIcon)
+            Picasso.get().load(response.teams.away.logo).into(awayTeamIcon)
         }
     }
 }

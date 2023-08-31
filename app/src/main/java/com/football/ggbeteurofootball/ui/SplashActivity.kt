@@ -4,14 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.football.ggbeteurofootball.api.FootballApiImplementation
 import com.football.ggbeteurofootball.data.ItemDay
 import com.football.ggbeteurofootball.databinding.ActivitySplashBinding
-import com.football.ggbeteurofootball.ui.MainViewModel.listLoadedFootball
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,17 +57,13 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun getFootballData() {
-        Log.d(TAG, "getFootballData viewModel.days: ${viewModel.days}")
-
         var countLoadedFootball = 0
 
         viewModel.days.forEachIndexed { index, itemDay ->
-            Log.d(TAG, "getFootballData:  outside coroutine ${itemDay.date}")
             CoroutineScope(Dispatchers.IO).launch{
                 footballApiImplementation.getFootballByDate(itemDay.date){
-                    Log.d(TAG, "getFootballData: ${itemDay.date}")
 
-                    viewModel.listLoadedFootball.add(index, it)
+                    viewModel.listLoadedFootball[index] = it
                     countLoadedFootball++
                     //AllData loaded
                     if (countLoadedFootball == 7)

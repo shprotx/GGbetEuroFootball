@@ -1,49 +1,42 @@
 package com.football.ggbeteurofootball.adapters
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.football.ggbeteurofootball.R
-import com.football.ggbeteurofootball.data.ItemDay
-import com.football.ggbeteurofootball.databinding.ItemDatesBinding
-import com.football.ggbeteurofootball.databinding.ItemDayBinding
+import com.football.ggbeteurofootball.databinding.ItemButtonsBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
-import com.football.ggbeteurofootball.listeners.MatchesListListener
+import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
 import com.football.ggbeteurofootball.models.Response
+import com.google.android.material.button.MaterialButton
 import com.squareup.picasso.Picasso
 import java.util.Locale
 
-class AdapterMatches(
+class AdapterFavorites(
     private var response: MutableList<Response>,
-    private val days: List<ItemDay>,
-    private val listener: MatchesListListener,
     private var priorityMap: MutableMap<Int, Int>,
-    private var selectedDay: Int
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val listener: FavoriteMatchSortListener
+): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private lateinit var binding: ItemDatesBinding
     private lateinit var binding1: ItemMatchBinding
+    private lateinit var binding: ItemButtonsBinding
 
     companion object {
         private const val VIEW_TYPE_FIXED = 0
         private const val VIEW_TYPE_NORMAL = 1
     }
 
-
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_FIXED -> {
                 val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_dates, parent, false)
-                binding = ItemDatesBinding.bind(view)
+                    .inflate(R.layout.item_buttons, parent, false)
+                binding = ItemButtonsBinding.bind(view)
                 FixedViewHolder(binding)
             }
             VIEW_TYPE_NORMAL -> {
@@ -56,12 +49,9 @@ class AdapterMatches(
         }
     }
 
-
-
-
-
-
-
+    override fun getItemCount(): Int {
+        return response.size + 1
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MatchViewHolder) {
@@ -72,21 +62,12 @@ class AdapterMatches(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) {
-            VIEW_TYPE_FIXED
-        } else {
-            VIEW_TYPE_NORMAL
-        }
+        return if (position == 0) VIEW_TYPE_FIXED
+        else VIEW_TYPE_NORMAL
     }
 
-    override fun getItemCount(): Int {
-        return response.size + 1
-    }
-
-    fun setNewList(list: MutableList<Response>, day: Int, map: MutableMap<Int, Int>) {
-        response = list
-        selectedDay = day
-        priorityMap = map
+    fun setNewSortedList(list: List<Response>) {
+        response = list.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -95,43 +76,34 @@ class AdapterMatches(
 
 
 
-    inner class FixedViewHolder(b: ItemDatesBinding) : RecyclerView.ViewHolder(b.root) {
-        private val list = listOf(b.d1, b.d2, b.d3, b.d4, b.d5, b.d6, b.d7)
+    inner class FixedViewHolder(b: ItemButtonsBinding) : RecyclerView.ViewHolder(b.root) {
+        private val list = listOf(b.upcoming, b.Live, b.finished)
         fun bind() {
             for (i in list.indices) {
-                list[i].dayName.text = days[i].name
-                list[i].dayNumber.text = days[i].number.toString()
-                if (i == selectedDay) {
-                    list[i].dayBack.setImageResource(R.drawable.background_day_selected)
-                    list[i].dayName.setTextColor(Color.parseColor("#FE8001"))
-                    list[i].dayNumber.setTextColor(Color.parseColor("#FE8001"))
-                } else {
-                    list[i].dayBack.setImageResource(R.drawable.background_day_unselected)
-                    list[i].dayName.setTextColor(Color.parseColor("#757A87"))
-                    list[i].dayNumber.setTextColor(Color.parseColor("#757A87"))
-                }
-                setButtonOnClick(list[i].dayBack, list, i)
+                setButtonOnClick(list[i], list, i)
             }
         }
 
-        fun setButtonOnClick(button: ImageView, buttons: List<ItemDayBinding>, index: Int) {
+        private fun setButtonOnClick(button: MaterialButton, buttons: List<MaterialButton>, index: Int) {
             button.setOnClickListener {
                 for (b in buttons) {
-                    if (b.dayBack == button) {
-                        b.dayBack.setImageResource(R.drawable.background_day_selected)
-                        b.dayName.setTextColor(Color.parseColor("#FE8001"))
-                        b.dayNumber.setTextColor(Color.parseColor("#FE8001"))
-                        selectedDay = index
-                        listener.onAnotherDaySelected(index)
+                    if (b == button) {
+                        b.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FE8001"))
+                        b.setIconResource(R.drawable.icon_ok)
+                        b.setTextColor(Color.WHITE)
+                        listener.onSortButtonPressed(index)
                     } else {
-                        b.dayBack.setImageResource(R.drawable.background_day_unselected)
-                        b.dayName.setTextColor(Color.parseColor("#757A87"))
-                        b.dayNumber.setTextColor(Color.parseColor("#757A87"))
+                        b.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#212632"))
+                        b.setTextColor(Color.parseColor("#757A87"))
+                        b.icon = null
                     }
                 }
             }
         }
     }
+
+
+
 
 
 
@@ -204,7 +176,7 @@ class AdapterMatches(
             }
 
             matchCard.setOnClickListener {
-                listener.onMatchClicked(item.fixture.id, priorityMap[item.fixture.id]!!)
+                //listener.onMatchClicked(item.fixture.id, priorityMap[item.fixture.id]!!)
             }
         }
 
@@ -213,7 +185,8 @@ class AdapterMatches(
             val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
             val parsedDate = dateFormat.parse(date)
             val calendar = Calendar.getInstance().apply { time = parsedDate }
-            return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
+            return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(
+                Calendar.MINUTE))
         }
     }
 }

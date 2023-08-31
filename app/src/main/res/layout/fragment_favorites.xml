@@ -36,13 +36,6 @@
         app:layout_constraintBottom_toBottomOf="@id/drawerButton"
         app:layout_constraintTop_toTopOf="@id/drawerButton" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="asdfasdfasdf"
-        android:textColor="@color/white" />
-
     <ProgressBar
         android:id="@+id/progressBarFavorites"
         style="@android:style/Widget.ProgressBar.Horizontal"
@@ -51,6 +44,18 @@
         android:progressBackgroundTint="@color/layer2"
         android:progressTint="@color/blue"
         android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/appBar" />
+
+    <TextView
+        android:id="@+id/textPlaceholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You haven't added any matches yet"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="64dp"
+        android:fontFamily="@font/roboto_400"
+        android:textColor="@color/textColor"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appBar" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -71,6 +76,7 @@
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/blue"
         android:src="@drawable/arrow_upward"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/white" />

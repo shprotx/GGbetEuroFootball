@@ -19,4 +19,9 @@
         android:name="com.football.ggbeteurofootball.ui.MatchDetailFragment"
         android:label="fragment_match_detailed"
         tools:layout="@layout/fragment_match_detailed" />
+    <fragment
+        android:id="@+id/noInternetFragment"
+        android:name="com.football.ggbeteurofootball.ui.NoInternetFragment"
+        android:label="fragment_no_internet"
+        tools:layout="@layout/fragment_no_internet" />
 </navigation>

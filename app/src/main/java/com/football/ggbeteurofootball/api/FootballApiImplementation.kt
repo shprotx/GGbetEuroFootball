@@ -36,7 +36,7 @@ class FootballApiImplementation(
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers["x-rapidapi-key"] = "1b57c21744483adfd80b8acfc195cb53"
+                    headers["x-rapidapi-key"] = "6b5e993ad23a4d155b992de4e5db82a6"
                     return headers
                 }
 
