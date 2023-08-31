@@ -83,7 +83,7 @@ class MatchDetailFragment : Fragment() {
             binding.progressBarMain.progress = 50
             apiImplementation.getDetailMatchByFixture(viewModel.currentMatchId) {
                 if (it != null) {
-                    binding
+                    // Show Statistic
                 } else {
                     binding.progressBarMain.isVisible = false
                     showWithH2H()
