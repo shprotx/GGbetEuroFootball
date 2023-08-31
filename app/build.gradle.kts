@@ -59,11 +59,11 @@ dependencies {
 
     implementation ("com.android.volley:volley:1.2.1")
 
-    implementation ("com.squareup.moshi:moshi:1.14.0")
-    implementation ("com.squareup.moshi:moshi-kotlin:1.14.0")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+    implementation ("com.squareup.moshi:moshi:1.15.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
 
-    implementation("com.google.dagger:hilt-android:2.46.1")
+    implementation("com.google.dagger:hilt-android:2.47")
     kapt("com.google.dagger:hilt-android-compiler:2.46.1")
 
     implementation("androidx.room:room-runtime:2.5.2")
@@ -71,4 +71,7 @@ dependencies {
     kapt("androidx.room:room-compiler:2.5.2")
 
     implementation("com.squareup.picasso:picasso:2.8")
+
+    //Swipe Update
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

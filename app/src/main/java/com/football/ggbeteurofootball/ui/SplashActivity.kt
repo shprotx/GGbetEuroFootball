@@ -1,11 +1,14 @@
 package com.football.ggbeteurofootball.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.football.ggbeteurofootball.api.FootballApiImplementation
@@ -47,14 +50,48 @@ class SplashActivity : AppCompatActivity() {
                 else delay(10)
             }
             viewModel.currentDay = 3
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+
+            if (checkInternet())
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
         }
 
         determinePlaceholders()
         getDataFromPrefs()
         determineDates()
         getFootballData()
+        listeners()
 
+    }
+
+
+
+
+
+
+
+    private fun checkInternet(): Boolean {
+        return try {
+            val connectionManager =
+                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+            val networkInfo = connectionManager.activeNetworkInfo
+            networkInfo != null && networkInfo.isConnected
+
+        } catch (e: Exception) {
+            false
+        }
+    }
+    
+    
+
+    
+    
+    
+    
+    private fun listeners() {
+        binding.swipeLayout.setOnRefreshListener {
+            Log.d(TAG, "listeners: swipe happened")
+        }
     }
 
 

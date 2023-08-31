@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -147,13 +148,16 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
 
     private fun findAllFavoriteMatchesInFootballs() {
-        for (football in viewModel.listLoadedFootball) {
-            if (football != null) {
-                for (response in football.response)
-                    if (viewModel.favoriteMatches.contains(response.fixture.id))
-                        favoriteMatches.add(response)
+        if (favoriteMatches.isEmpty()) {
+            for (football in viewModel.listLoadedFootball) {
+                if (football != null) {
+                    for (response in football.response)
+                        if (viewModel.favoriteMatches.contains(response.fixture.id))
+                            favoriteMatches.add(response)
+                }
             }
         }
+
         priorityMap = getPriorityMap()
     }
 
@@ -165,9 +169,9 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
     override fun onSortButtonPressed(index: Int) {
         val sortedList = when (index) {
-            0 -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 2 } }
+            0 -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 3 } }
             1 -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 1 } }
-            else -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 3 } }
+            else -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 2 } }
         }
         adapter.setNewSortedList(sortedList)
     }
@@ -180,6 +184,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
     override fun onMatchClicked(id: Int, type: Int) {
         viewModel.currentMatchId = id
         viewModel.currentType = type
+        Log.d(TAG, "(Clicked) match: ${viewModel.currentMatchId}, type: ${viewModel.currentType}")
         findNavController().navigate(R.id.matchDetailFragment)
     }
 }

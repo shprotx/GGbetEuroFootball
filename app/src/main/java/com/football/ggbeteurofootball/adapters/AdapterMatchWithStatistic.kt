@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.adapters
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.data.ItemH2H
+import com.football.ggbeteurofootball.data.ItemStatisticBody
 import com.football.ggbeteurofootball.data.ItemStatisticHeader
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.databinding.ItemStatisticBodyBinding
@@ -18,7 +20,7 @@ import com.squareup.picasso.Picasso
 
 class AdapterMatchWithStatistic(
     private val context: Context,
-    private var dataList: List<ItemH2H>,
+    private var dataList: List<ItemStatisticBody>,
     private val response: Response,
     private val header: ItemStatisticHeader
 ) :
@@ -73,7 +75,7 @@ class AdapterMatchWithStatistic(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is StatHolder -> {
-                val dataItem = dataList[position - 2]
+                val dataItem = dataList[position - 3]
                 holder.bind(dataItem)
             }
             is FixedViewHolder -> holder.bind(response)
@@ -165,8 +167,27 @@ class AdapterMatchWithStatistic(
         private val awayNumber = b.awayValue
         private val awayProgress = b.awayProgress
 
-        fun bind(item: ItemH2H) {
+        fun bind(item: ItemStatisticBody) {
+            title.text = item.title
+            homeNumber.text = if (item.homeScore != null) item.homeScore.toString() else "0"
+            awayNumber.text = if (item.awayScore != null) item.awayScore.toString() else "0"
+            if (item.homeScore != null && item.awayScore != null) {
+                val maxProgress = item.homeScore + item.awayScore
+                homeProgress.max = maxProgress
+                awayProgress.max = maxProgress
+                homeProgress.progress = item.homeScore
+                awayProgress.progress = item.awayScore
 
+
+                if (item.homeScore < item.awayScore) {
+                    homeProgress.progressTintList = ColorStateList.valueOf(Color.parseColor("#E2291A"))
+                    awayProgress.progressTintList = ColorStateList.valueOf(Color.parseColor("#00AA00"))
+                } else {
+                    homeProgress.progressTintList = ColorStateList.valueOf(Color.parseColor("#00AA00"))
+                    awayProgress.progressTintList = ColorStateList.valueOf(Color.parseColor("#E2291A"))
+                }
+
+            }
         }
     }
 
