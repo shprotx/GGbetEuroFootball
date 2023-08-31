@@ -1,7 +1,6 @@
 package com.football.ggbeteurofootball.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,15 +14,13 @@ import com.football.ggbeteurofootball.adapters.AdapterFavorites
 import com.football.ggbeteurofootball.databinding.FragmentFavoritesBinding
 import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
 import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
-import com.football.ggbeteurofootball.models.football.Response
+
 
 class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelectedListener {
 
     private lateinit var binding: FragmentFavoritesBinding
     private val viewModel = MainViewModel
-    private val favoriteMatches = mutableListOf<Response>()
     private lateinit var priorityMap: MutableMap<Int, Int>
-    private lateinit var adapter: AdapterFavorites
     private val TAG = "FavoritesFragment"
 
     override fun onCreateView(
@@ -38,8 +35,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        
         hidePlaceholder()
         findAllFavoriteMatchesInFootballs()
         recycler()
@@ -53,8 +49,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
 
     private fun hidePlaceholder() {
-        if (viewModel.favoriteMatches.isNotEmpty())
-            binding.textPlaceholder.isVisible = false
+        binding.textPlaceholder.isVisible = viewModel.favoriteMatches.isEmpty()
     }
 
 
@@ -83,15 +78,15 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
     private fun recycler() {
         val layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdapterFavorites(
-            favoriteMatches,
+        viewModel.favoritesAdapter = AdapterFavorites(
+            viewModel.favoriteMatchesList,
             getPriorityMap(),
             this,
             this,
             viewModel.placeholderSize1,
             viewModel.placeholderSize2
         )
-        binding.recyclerFavorites.adapter = adapter
+        binding.recyclerFavorites.adapter = viewModel.favoritesAdapter
         binding.recyclerFavorites.layoutManager = layoutManager
         binding.recyclerFavorites.setOnScrollChangeListener { _, _, _, _, _ ->
             if (layoutManager.findFirstVisibleItemPosition() > 0) binding.fab.show()
@@ -129,7 +124,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
             "LIVE" to 1
         )
 
-        for (data in favoriteMatches) {
+        for (data in viewModel.favoriteMatchesList) {
             val status = data.fixture.status.short
 
             val priority = abbreviationPriorities.entries.firstOrNull { entry ->
@@ -148,13 +143,12 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
 
     private fun findAllFavoriteMatchesInFootballs() {
-        if (favoriteMatches.isEmpty()) {
-            for (football in viewModel.listLoadedFootball) {
-                if (football != null) {
-                    for (response in football.response)
-                        if (viewModel.favoriteMatches.contains(response.fixture.id))
-                            favoriteMatches.add(response)
-                }
+        viewModel.favoriteMatchesList.clear()
+        for (football in viewModel.listLoadedFootball) {
+            if (football != null) {
+                for (response in football.response)
+                    if (viewModel.favoriteMatches.contains(response.fixture.id))
+                            viewModel.favoriteMatchesList.add(response)
             }
         }
 
@@ -169,11 +163,11 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
     override fun onSortButtonPressed(index: Int) {
         val sortedList = when (index) {
-            0 -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 3 } }
-            1 -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 1 } }
-            else -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 2 } }
+            0 -> { viewModel.favoriteMatchesList.filter { item -> priorityMap[item.fixture.id] == 3 } }
+            1 -> { viewModel.favoriteMatchesList.filter { item -> priorityMap[item.fixture.id] == 1 } }
+            else -> { viewModel.favoriteMatchesList.filter { item -> priorityMap[item.fixture.id] == 2 } }
         }
-        adapter.setNewSortedList(sortedList)
+        viewModel.favoritesAdapter.setNewSortedList(sortedList)
     }
 
 
@@ -184,7 +178,6 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
     override fun onMatchClicked(id: Int, type: Int) {
         viewModel.currentMatchId = id
         viewModel.currentType = type
-        Log.d(TAG, "(Clicked) match: ${viewModel.currentMatchId}, type: ${viewModel.currentType}")
         findNavController().navigate(R.id.matchDetailFragment)
     }
 }

@@ -206,8 +206,8 @@ class SplashActivity : AppCompatActivity() {
     private fun determineDates() {
         if (viewModel.days.isEmpty()) {
             val currentDate = Calendar.getInstance()
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val dayOfWeekFormat = SimpleDateFormat("EEE", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val dayOfWeekFormat = SimpleDateFormat("EEE", Locale.ENGLISH)
 
             for (i in 3 downTo 1) {
                 val date = Calendar.getInstance()

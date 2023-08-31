@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.ui
 
 import androidx.lifecycle.ViewModel
+import com.football.ggbeteurofootball.adapters.AdapterFavorites
 import com.football.ggbeteurofootball.data.ItemDay
 import com.football.ggbeteurofootball.models.football.Football
 import com.football.ggbeteurofootball.models.football.Response
@@ -17,7 +18,11 @@ object MainViewModel: ViewModel() {
     var currentPriorityMap = mutableMapOf<Int, Int>()
 
     var favoriteMatches = mutableListOf<Int>()
+    var favoriteMatchesList = mutableListOf<Response>()
 
     var placeholderSize1 = 0
     var placeholderSize2 = 0
+
+    lateinit var favoritesAdapter: AdapterFavorites
+
 }

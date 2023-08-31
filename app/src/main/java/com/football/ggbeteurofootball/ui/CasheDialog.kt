@@ -7,6 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.DialogCasheBinding
+import com.football.ggbeteurofootball.listeners.DialogCashListener
+import com.football.ggbeteurofootball.models.football.Response
 
 class CasheDialog(private val editor: Editor) : DialogFragment() {
 
@@ -23,6 +25,8 @@ class CasheDialog(private val editor: Editor) : DialogFragment() {
         binding.cancel.setOnClickListener { dismiss() }
         binding.delete.setOnClickListener {
             viewModel.favoriteMatches.clear()
+            viewModel.favoriteMatchesList.clear()
+            viewModel.favoritesAdapter.setNewSortedList(listOf<Response>())
             editor.putString("favorite", "")
             editor.apply()
             dismiss()

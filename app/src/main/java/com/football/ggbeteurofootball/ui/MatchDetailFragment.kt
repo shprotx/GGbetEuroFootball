@@ -1,9 +1,13 @@
 package com.football.ggbeteurofootball.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.content.SharedPreferences.Editor
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,10 +43,16 @@ class MatchDetailFragment : Fragment() {
     private lateinit var binding: FragmentMatchDetailedBinding
     private val viewModel = MainViewModel
     private val response: Response? = initResponse()
-//        viewModel.currentDayMatches.find { it.fixture.id == viewModel.currentMatchId }
     private var isMatchInFavorites = false
 
     private val TAG = "MatchDetailFragment"
+
+
+    companion object {
+        private const val PICK_CONTACT_REQUEST = 1
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,11 +69,8 @@ class MatchDetailFragment : Fragment() {
 
         someBaseSettings()
 
-        Log.d(TAG, "match: ${viewModel.currentMatchId}, type: ${viewModel.currentType}")
-        if (viewModel.currentType == 2)
-            showWithStatistic()
-        else
-            showWithH2H()
+        if (viewModel.currentType == 2) showWithStatistic()
+        else showWithH2H()
 
         listeners(view)
     }
@@ -98,6 +105,12 @@ class MatchDetailFragment : Fragment() {
             false
         }
     }
+
+
+
+
+
+
 
 
     private fun showWithStatistic() {
@@ -137,7 +150,6 @@ class MatchDetailFragment : Fragment() {
                     }
 
                 } else {
-                    Log.d(TAG, "showWithStatistic: $response")
                     binding.progressBarMain.isVisible = false
                     showWithH2H()
                 }
@@ -152,10 +164,17 @@ class MatchDetailFragment : Fragment() {
 
 
 
+
+
     private fun convertToPercentlessInt(input: String): Int? {
         val trimmedInput = input.trimEnd('%')
         return trimmedInput.toIntOrNull()
     }
+
+
+
+
+
 
 
 
@@ -212,13 +231,14 @@ class MatchDetailFragment : Fragment() {
                 viewModel.placeholderSize2
             )
             binding.recyclerMatchDetail.adapter = adapter
-       } else {
-            Log.d(TAG, "showWithH2H: $response")
-            //findNavController().navigate(R.id.noInternetFragment)
-        }
-
-
+       }
     }
+
+
+
+
+
+
 
 
     private fun convertDateFormat(inputDate: String): String {
@@ -231,6 +251,12 @@ class MatchDetailFragment : Fragment() {
     }
 
 
+
+
+
+
+
+
     private fun listeners(view: View) {
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
@@ -241,29 +267,46 @@ class MatchDetailFragment : Fragment() {
                 isMatchInFavorites = !isMatchInFavorites
                 if (isMatchInFavorites) {
                     viewModel.favoriteMatches.add(viewModel.currentMatchId)
+                    saveFavoritesToPrefs()
                     binding.favoriteButton.setImageResource(R.drawable.star_checked)
                     showSnackBar(view, "Match was saved to favorites", "Cancel") {
                         viewModel.favoriteMatches.remove(viewModel.currentMatchId)
+                        saveFavoritesToPrefs()
                         binding.favoriteButton.setImageResource(R.drawable.star_unchecked)
                         isMatchInFavorites = !isMatchInFavorites
                     }
                 } else {
                     viewModel.favoriteMatches.remove(viewModel.currentMatchId)
+                    viewModel.favoriteMatchesList.clear()
+                    saveFavoritesToPrefs()
                     binding.favoriteButton.setImageResource(R.drawable.star_unchecked)
                     showSnackBar(view, "Match was deleted from favorites", "Cancel") {
                         viewModel.favoriteMatches.add(viewModel.currentMatchId)
+                        saveFavoritesToPrefs()
                         binding.favoriteButton.setImageResource(R.drawable.star_checked)
                         isMatchInFavorites = !isMatchInFavorites
+                        Log.d(TAG, "listeners: shack canceled")
                     }
                 }
             } else {
-                showSnackBar(view, "Something went wrong. Try again", "Retry") {
-                    //
+                showSnackBar(view, "Something went wrong. Try again", "Back") {
+                    findNavController().popBackStack()
                 }
             }
+        }
+
+        binding.shareButton.setOnClickListener {
+            val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+            startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST)
 
         }
     }
+    
+
+
+
+
+
 
 
     private fun showSnackBar(
@@ -272,14 +315,20 @@ class MatchDetailFragment : Fragment() {
         button: String,
         toDo: () -> Unit
     ) {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
             .setActionTextColor(Color.parseColor("#FE8001"))
             .setBackgroundTint(Color.parseColor("#2A3040"))
             .setTextColor(Color.WHITE)
             .setAction(button) {
-                toDo
+                toDo()
             }.show()
     }
+
+
+
+
+
+
 
 
     private fun intListToString(intList: MutableList<Int>): String {
@@ -287,10 +336,67 @@ class MatchDetailFragment : Fragment() {
     }
 
 
+
+
+
+
+
+
     override fun onDestroyView() {
         super.onDestroyView()
+        saveFavoritesToPrefs()
+    }
+
+
+
+
+
+
+    private fun saveFavoritesToPrefs() {
         val favorites = intListToString(viewModel.favoriteMatches)
         editor.putString("favorite", favorites)
         editor.apply()
+    }
+
+
+
+
+
+
+    private fun getMessageForSending(): String {
+        return if (response != null) {
+            "Look at this match! ${response.teams.home.name} VS ${response.teams.away.name} on ${convertDateTime(response.fixture.date)}"
+        } else "I wanted to show you a very interesting match, but something went wrong."
+    }
+
+
+
+
+
+    private fun convertDateTime(dateTime: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH)
+        val outputFormat = SimpleDateFormat("EEE HH:mm", Locale.ENGLISH)
+        val date: Date = inputFormat.parse(dateTime)
+        return outputFormat.format(date)
+    }
+
+
+
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { contactUri ->
+                val contactId = contactUri.lastPathSegment
+                val smsUri = Uri.parse("smsto:")
+                val smsIntent = Intent(Intent.ACTION_SENDTO, smsUri)
+                smsIntent.putExtra("sms_body", getMessageForSending())
+                smsIntent.data = Uri.parse("smsto:$contactId")
+                startActivity(smsIntent)
+            }
+        }
     }
 }
