@@ -2,24 +2,19 @@ package com.football.ggbeteurofootball.adapters
 
 import android.content.Context
 import android.graphics.Color
-import android.icu.text.SimpleDateFormat
-import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.data.ItemH2H
 import com.football.ggbeteurofootball.data.ItemStatisticHeader
-import com.football.ggbeteurofootball.databinding.ItemH2hBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.databinding.ItemStatisticBodyBinding
 import com.football.ggbeteurofootball.databinding.ItemStatisticHeaderBinding
 import com.football.ggbeteurofootball.databinding.ItemTitleBinding
-import com.football.ggbeteurofootball.models.Response
+import com.football.ggbeteurofootball.models.football.Response
 import com.squareup.picasso.Picasso
-import java.util.Locale
 
 class AdapterMatchWithStatistic(
     private val context: Context,

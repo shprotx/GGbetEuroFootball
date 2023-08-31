@@ -1,10 +1,10 @@
-package com.football.ggbeteurofootball.models
+package com.football.ggbeteurofootball.models.football
 
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 
-data class Goals(
+data class Penalty(
     val away: Int?,
     val home: Int?
 )

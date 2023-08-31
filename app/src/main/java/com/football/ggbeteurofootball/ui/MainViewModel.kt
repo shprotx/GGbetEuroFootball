@@ -2,8 +2,8 @@ package com.football.ggbeteurofootball.ui
 
 import androidx.lifecycle.ViewModel
 import com.football.ggbeteurofootball.data.ItemDay
-import com.football.ggbeteurofootball.models.Football
-import com.football.ggbeteurofootball.models.Response
+import com.football.ggbeteurofootball.models.football.Football
+import com.football.ggbeteurofootball.models.football.Response
 
 object MainViewModel: ViewModel() {
 

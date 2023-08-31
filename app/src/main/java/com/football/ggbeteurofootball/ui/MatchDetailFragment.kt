@@ -1,6 +1,5 @@
 package com.football.ggbeteurofootball.ui
 
-import android.content.ContentValues
 import android.content.SharedPreferences.Editor
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
@@ -9,15 +8,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.adapters.AdapterMatchWithoutStatistic
+import com.football.ggbeteurofootball.api.FootballApiImplementation
 import com.football.ggbeteurofootball.data.ItemH2H
 import com.football.ggbeteurofootball.databinding.FragmentMatchDetailedBinding
-import com.football.ggbeteurofootball.models.Response
+import com.football.ggbeteurofootball.models.football.Response
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -25,10 +29,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MatchDetailFragment : Fragment() {
 
-    @Inject lateinit var editor: Editor
+    @Inject
+    lateinit var editor: Editor
+    @Inject
+    lateinit var apiImplementation: FootballApiImplementation
     private lateinit var binding: FragmentMatchDetailedBinding
     private val viewModel = MainViewModel
-    private val response: Response? = viewModel.currentDayMatches.find { it.fixture.id == viewModel.currentMatchId }
+    private val response: Response? =
+        viewModel.currentDayMatches.find { it.fixture.id == viewModel.currentMatchId }
     private var isMatchInFavorites = false
 
     private val TAG = "MatchDetailFragment"
@@ -57,10 +65,6 @@ class MatchDetailFragment : Fragment() {
     }
 
 
-
-
-
-
     private fun someBaseSettings() {
         isMatchInFavorites = if (viewModel.favoriteMatches.contains(viewModel.currentMatchId)) {
             binding.favoriteButton.setImageResource(R.drawable.star_checked)
@@ -72,22 +76,27 @@ class MatchDetailFragment : Fragment() {
     }
 
 
-
-
-
-
-
     private fun showWithStatistic() {
+        binding.progressBarMain.isVisible = true
+        lifecycleScope.launch(Dispatchers.IO) {
+            binding.progressBarMain.isVisible = false
+            binding.progressBarMain.progress = 50
+            apiImplementation.getDetailMatchByFixture(viewModel.currentMatchId) {
+                if (it != null) {
+                    binding
+                } else {
+                    binding.progressBarMain.isVisible = false
+                    showWithH2H()
+                }
+
+            }
+        }
 
     }
 
 
-
-
-
-
-
     private fun showWithH2H() {
+        Log.d(TAG, "showWithH2H score: ${response?.score}")
 
         if (response != null) {
             val h2h = mutableListOf<ItemH2H>()
@@ -99,7 +108,8 @@ class MatchDetailFragment : Fragment() {
                         convertDateFormat(response.fixture.date),
                         response.score.halftime.home!!,
                         response.score.halftime.away!!
-                ))
+                    )
+                )
             if (response.score.fulltime.home != null)
                 h2h.add(
                     ItemH2H(
@@ -108,7 +118,8 @@ class MatchDetailFragment : Fragment() {
                         convertDateFormat(response.fixture.date),
                         response.score.fulltime.home!!,
                         response.score.fulltime.away!!
-                    ))
+                    )
+                )
             if (response.score.extratime.home != null)
                 h2h.add(
                     ItemH2H(
@@ -117,7 +128,8 @@ class MatchDetailFragment : Fragment() {
                         convertDateFormat(response.fixture.date),
                         response.score.extratime.home!!,
                         response.score.extratime.away!!
-                    ))
+                    )
+                )
             if (response.score.penalty.home != null)
                 h2h.add(
                     ItemH2H(
@@ -126,8 +138,10 @@ class MatchDetailFragment : Fragment() {
                         convertDateFormat(response.fixture.date),
                         response.score.penalty.home!!,
                         response.score.penalty.away!!
-                    ))
+                    )
+                )
 
+            Log.d(TAG, "showWithH2H h2h: $h2h")
             val adapter = AdapterMatchWithoutStatistic(
                 requireContext(),
                 h2h,
@@ -145,11 +159,6 @@ class MatchDetailFragment : Fragment() {
     }
 
 
-
-
-
-
-
     private fun convertDateFormat(inputDate: String): String {
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH)
         val outputDateFormat = SimpleDateFormat("EEEE d MMMM yyyy", Locale.ENGLISH)
@@ -158,13 +167,6 @@ class MatchDetailFragment : Fragment() {
 
         return outputDateFormat.format(date)
     }
-
-
-
-
-
-
-
 
 
     private fun listeners(view: View) {
@@ -202,9 +204,6 @@ class MatchDetailFragment : Fragment() {
     }
 
 
-
-
-
     private fun showSnackBar(
         view: View,
         message: String,
@@ -221,19 +220,9 @@ class MatchDetailFragment : Fragment() {
     }
 
 
-
-
-
-
-
     private fun intListToString(intList: MutableList<Int>): String {
         return intList.joinToString(",")
     }
-
-
-
-
-
 
 
     override fun onDestroyView() {

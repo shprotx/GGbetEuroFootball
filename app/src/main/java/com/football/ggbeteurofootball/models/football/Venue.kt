@@ -1,4 +1,4 @@
-package com.football.ggbeteurofootball.models
+package com.football.ggbeteurofootball.models.football
 
 import com.squareup.moshi.JsonClass
 

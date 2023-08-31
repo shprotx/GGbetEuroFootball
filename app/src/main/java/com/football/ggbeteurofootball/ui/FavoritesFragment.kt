@@ -1,7 +1,6 @@
 package com.football.ggbeteurofootball.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.football.ggbeteurofootball.adapters.AdapterFavorites
 import com.football.ggbeteurofootball.databinding.FragmentFavoritesBinding
 import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
 import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
-import com.football.ggbeteurofootball.models.Response
+import com.football.ggbeteurofootball.models.football.Response
 
 class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelectedListener {
 

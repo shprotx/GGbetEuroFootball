@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,7 +15,7 @@ import com.football.ggbeteurofootball.data.ItemH2H
 import com.football.ggbeteurofootball.databinding.ItemH2hBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.databinding.ItemTitleBinding
-import com.football.ggbeteurofootball.models.Response
+import com.football.ggbeteurofootball.models.football.Response
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

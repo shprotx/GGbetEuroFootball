@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -15,7 +14,7 @@ import com.football.ggbeteurofootball.databinding.ItemButtonsBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
 import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
-import com.football.ggbeteurofootball.models.Response
+import com.football.ggbeteurofootball.models.football.Response
 import com.google.android.material.button.MaterialButton
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
