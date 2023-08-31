@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "GGbet EuroFootball"
+rootProject.name = "GG.Big Sports"
 include(":app")
  
