@@ -77,10 +77,7 @@ class MatchDetailFragment : Fragment() {
 
 
     private fun showWithStatistic() {
-        binding.progressBarMain.isVisible = true
         lifecycleScope.launch(Dispatchers.IO) {
-            binding.progressBarMain.isVisible = false
-            binding.progressBarMain.progress = 50
             apiImplementation.getDetailMatchByFixture(viewModel.currentMatchId) {
                 if (it != null) {
                     // Show Statistic
@@ -96,8 +93,6 @@ class MatchDetailFragment : Fragment() {
 
 
     private fun showWithH2H() {
-        Log.d(TAG, "showWithH2H score: ${response?.score}")
-
         if (response != null) {
             val h2h = mutableListOf<ItemH2H>()
             if (response.score.halftime.home != null)
@@ -141,7 +136,6 @@ class MatchDetailFragment : Fragment() {
                     )
                 )
 
-            Log.d(TAG, "showWithH2H h2h: $h2h")
             val adapter = AdapterMatchWithoutStatistic(
                 requireContext(),
                 h2h,
@@ -151,8 +145,7 @@ class MatchDetailFragment : Fragment() {
                 viewModel.placeholderSize2
             )
             binding.recyclerMatchDetail.adapter = adapter
-            Log.d(TAG, "showWithH2H: ${response.fixture.status.short}")
-        } else
+       } else
             findNavController().navigate(R.id.noInternetFragment)
 
 
