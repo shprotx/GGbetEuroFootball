@@ -1,6 +1,7 @@
 package com.football.ggbeteurofootball.ui
 
 import android.content.ContentValues
+import android.content.SharedPreferences.Editor
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
@@ -16,11 +17,15 @@ import com.football.ggbeteurofootball.data.ItemH2H
 import com.football.ggbeteurofootball.databinding.FragmentMatchDetailedBinding
 import com.football.ggbeteurofootball.models.Response
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MatchDetailFragment : Fragment() {
 
+    @Inject lateinit var editor: Editor
     private lateinit var binding: FragmentMatchDetailedBinding
     private val viewModel = MainViewModel
     private val response: Response? = viewModel.currentDayMatches.find { it.fixture.id == viewModel.currentMatchId }
@@ -127,7 +132,9 @@ class MatchDetailFragment : Fragment() {
                 requireContext(),
                 h2h,
                 response,
-                viewModel.currentType
+                viewModel.currentType,
+                viewModel.placeholderSize1,
+                viewModel.placeholderSize2
             )
             binding.recyclerMatchDetail.adapter = adapter
             Log.d(TAG, "showWithH2H: ${response.fixture.status.short}")
@@ -213,4 +220,26 @@ class MatchDetailFragment : Fragment() {
             }.show()
     }
 
+
+
+
+
+
+
+    private fun intListToString(intList: MutableList<Int>): String {
+        return intList.joinToString(",")
+    }
+
+
+
+
+
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val favorites = intListToString(viewModel.favoriteMatches)
+        editor.putString("favorite", favorites)
+        editor.apply()
+    }
 }

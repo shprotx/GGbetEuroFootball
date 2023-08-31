@@ -13,17 +13,26 @@ import com.football.ggbeteurofootball.data.ItemDay
 import com.football.ggbeteurofootball.databinding.ItemDatesBinding
 import com.football.ggbeteurofootball.databinding.ItemDayBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
-import com.football.ggbeteurofootball.listeners.MatchesListListener
+import com.football.ggbeteurofootball.listeners.DaySelectedListener
+import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
 import com.football.ggbeteurofootball.models.Response
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URL
 import java.util.Locale
 
 class AdapterMatches(
     private var response: MutableList<Response>,
     private val days: List<ItemDay>,
-    private val listener: MatchesListListener,
+    private val listener: MatchesSelectedListener,
     private var priorityMap: MutableMap<Int, Int>,
-    private var selectedDay: Int
+    private var selectedDay: Int,
+    private var listenerDay: DaySelectedListener,
+    private val size1: Int,
+    private val size2: Int
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -122,7 +131,7 @@ class AdapterMatches(
                         b.dayName.setTextColor(Color.parseColor("#FE8001"))
                         b.dayNumber.setTextColor(Color.parseColor("#FE8001"))
                         selectedDay = index
-                        listener.onAnotherDaySelected(index)
+                        listenerDay.onAnotherDaySelected(index)
                     } else {
                         b.dayBack.setImageResource(R.drawable.background_day_unselected)
                         b.dayName.setTextColor(Color.parseColor("#757A87"))
@@ -154,15 +163,8 @@ class AdapterMatches(
         fun bind(item: Response) {
             league.text = item.league.name
 
-            if (item.teams.home.logo.isEmpty())
-                firstTeamIcon.setImageResource(R.drawable.logo_placeholder)
-            else
-                Picasso.get().load(item.teams.home.logo).into(firstTeamIcon)
-
-            if (item.teams.away.logo.isEmpty())
-                secondTeamIcon.setImageResource(R.drawable.logo_placeholder__1_)
-            else
-                Picasso.get().load(item.teams.away.logo).into(secondTeamIcon)
+            setPicture(item.teams.home.logo, firstTeamIcon)
+            setPicture(item.teams.away.logo, secondTeamIcon)
 
             firstTeamName.text = item.teams.home.name
             secondTeamName.text = item.teams.away.name
@@ -214,6 +216,17 @@ class AdapterMatches(
             val parsedDate = dateFormat.parse(date)
             val calendar = Calendar.getInstance().apply { time = parsedDate }
             return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
+        }
+
+
+        private fun setPicture(img: String, target: ImageView) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val imgSize = withContext(Dispatchers.IO) {
+                    URL(img).openConnection()
+                }.contentLength
+                if (!(imgSize == size1 || imgSize == size2))
+                    withContext(Dispatchers.Main) { Picasso.get().load(img).into(target) }
+            }
         }
     }
 }

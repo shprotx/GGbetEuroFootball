@@ -8,14 +8,16 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.adapters.AdapterFavorites
 import com.football.ggbeteurofootball.databinding.FragmentFavoritesBinding
 import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
+import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
 import com.football.ggbeteurofootball.models.Response
 
-class FavoritesFragment : Fragment(), FavoriteMatchSortListener {
+class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelectedListener {
 
     private lateinit var binding: FragmentFavoritesBinding
     private val viewModel = MainViewModel
@@ -84,7 +86,10 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener {
         adapter = AdapterFavorites(
             favoriteMatches,
             getPriorityMap(),
-            this
+            this,
+            this,
+            viewModel.placeholderSize1,
+            viewModel.placeholderSize2
         )
         binding.recyclerFavorites.adapter = adapter
         binding.recyclerFavorites.layoutManager = layoutManager
@@ -166,5 +171,16 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener {
             else -> { favoriteMatches.filter { item -> priorityMap[item.fixture.id] == 3 } }
         }
         adapter.setNewSortedList(sortedList)
+    }
+
+
+
+
+
+
+    override fun onMatchClicked(id: Int, type: Int) {
+        viewModel.currentMatchId = id
+        viewModel.currentType = type
+        findNavController().navigate(R.id.matchDetailFragment)
     }
 }

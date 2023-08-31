@@ -16,33 +16,6 @@
     android:background="@color/background"
     tools:context=".ui.MainActivity">
 
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        android:theme="@style/Theme.GGbetEuroFootball.AppBarOverlay">-->
-
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="15dp"-->
-<!--            android:background="@color/layer1"/>-->
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@color/layer1"-->
-<!--            app:popupTheme="@style/Theme.GGbetEuroFootball.PopupOverlay" />-->
-<!--        <ProgressBar-->
-<!--            android:id="@+id/progressBarMain"-->
-<!--            style="@android:style/Widget.ProgressBar.Horizontal"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="4dp"-->
-<!--            android:visibility="gone"-->
-<!--            android:progressBackgroundTint="@color/layer2"-->
-<!--            android:progressTint="@color/blue"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/logoGg" />-->
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
-
     <fragment
         android:id="@+id/nav_host_fragment_content_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -69,6 +42,7 @@
         app:subheaderColor="#757A87"
         app:itemRippleColor="@color/white"
         app:itemIconTint="@color/white"
+        app:itemShapeFillColor="@color/drawer_colors"
         />
 
 

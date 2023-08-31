@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -16,19 +18,27 @@ import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.databinding.ItemTitleBinding
 import com.football.ggbeteurofootball.models.Response
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URL
 import java.util.Locale
 
 class AdapterMatchWithoutStatistic(
     private val context: Context,
     private var dataList: List<ItemH2H>,
     private val response: Response,
-    private val type: Int
+    private val type: Int,
+    private val size1: Int,
+    private val size2: Int
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var binding: ItemH2hBinding
     private lateinit var binding1: ItemMatchBinding
     private lateinit var binding2: ItemTitleBinding
+    private val TAG = "AdapterMatchWithoutStatistic"
 
     companion object {
         private const val VIEW_TYPE_FIXED = 0
@@ -112,15 +122,8 @@ class AdapterMatchWithoutStatistic(
         fun bind(item: Response) {
             league.text = item.league.name
 
-            if (item.teams.home.logo.isEmpty())
-                firstTeamIcon.setImageResource(R.drawable.logo_placeholder)
-            else
-                Picasso.get().load(item.teams.home.logo).into(firstTeamIcon)
-
-            if (item.teams.away.logo.isEmpty())
-                secondTeamIcon.setImageResource(R.drawable.logo_placeholder__1_)
-            else
-                Picasso.get().load(item.teams.away.logo).into(secondTeamIcon)
+            setPicture(item.teams.home.logo, firstTeamIcon)
+            setPicture(item.teams.away.logo, secondTeamIcon)
 
             firstTeamName.text = item.teams.home.name
             secondTeamName.text = item.teams.away.name
@@ -163,6 +166,17 @@ class AdapterMatchWithoutStatistic(
             val calendar = Calendar.getInstance().apply { time = parsedDate }
             return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(
                 Calendar.MINUTE))
+        }
+
+
+        private fun setPicture(img: String, target: ImageView) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val imgSize = withContext(Dispatchers.IO) {
+                    URL(img).openConnection()
+                }.contentLength
+                if (!(imgSize == size1 || imgSize == size2))
+                    withContext(Dispatchers.Main) { Picasso.get().load(img).into(target) }
+            }
         }
     }
 

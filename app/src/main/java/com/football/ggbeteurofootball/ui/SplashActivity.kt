@@ -2,6 +2,7 @@ package com.football.ggbeteurofootball.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -15,6 +16,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URL
 import java.util.Locale
 import javax.inject.Inject
 
@@ -23,6 +26,7 @@ import javax.inject.Inject
 class SplashActivity : AppCompatActivity() {
 
     @Inject lateinit var footballApiImplementation: FootballApiImplementation
+    @Inject lateinit var sharedPreferences: SharedPreferences
     private lateinit var binding: ActivitySplashBinding
     private val viewModel = MainViewModel
     private var isAllDataCollected = false
@@ -46,9 +50,30 @@ class SplashActivity : AppCompatActivity() {
             startActivity(Intent(this@SplashActivity, MainActivity::class.java))
         }
 
+        determinePlaceholders()
+        getDataFromPrefs()
         determineDates()
         getFootballData()
 
+    }
+
+
+
+
+
+
+    private fun getDataFromPrefs() {
+        val list = sharedPreferences.getString("favorite", "")
+        if (!list.isNullOrEmpty())
+            viewModel.favoriteMatches = stringToIntList(list)
+    }
+
+
+
+
+
+    private fun stringToIntList(string: String): MutableList<Int> {
+        return string.split(",").map { it.toInt() }.toMutableList()
     }
 
 
@@ -71,6 +96,27 @@ class SplashActivity : AppCompatActivity() {
 
                 }
             }
+        }
+    }
+
+
+
+
+
+
+
+    private fun determinePlaceholders() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val url = "https://media-3.api-sports.io/football/teams/15176.png"
+            val url1 = "https://media-3.api-sports.io/football/teams/2642.png"
+            val connection = withContext(Dispatchers.IO) {
+                URL(url).openConnection()
+            }
+            val connection1 = withContext(Dispatchers.IO) {
+                URL(url1).openConnection()
+            }
+            viewModel.placeholderSize1 = connection.contentLength
+            viewModel.placeholderSize2 = connection1.contentLength
         }
     }
 

@@ -6,21 +6,31 @@ import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.ItemButtonsBinding
 import com.football.ggbeteurofootball.databinding.ItemMatchBinding
 import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
+import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
 import com.football.ggbeteurofootball.models.Response
 import com.google.android.material.button.MaterialButton
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URL
 import java.util.Locale
 
 class AdapterFavorites(
     private var response: MutableList<Response>,
     private var priorityMap: MutableMap<Int, Int>,
-    private val listener: FavoriteMatchSortListener
+    private val listener: FavoriteMatchSortListener,
+    private val listenerSelect: MatchesSelectedListener,
+    private val size1: Int,
+    private val size2: Int
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var binding1: ItemMatchBinding
@@ -126,15 +136,8 @@ class AdapterFavorites(
         fun bind(item: Response) {
             league.text = item.league.name
 
-            if (item.teams.home.logo.isEmpty())
-                firstTeamIcon.setImageResource(R.drawable.logo_placeholder)
-            else
-                Picasso.get().load(item.teams.home.logo).into(firstTeamIcon)
-
-            if (item.teams.away.logo.isEmpty())
-                secondTeamIcon.setImageResource(R.drawable.logo_placeholder__1_)
-            else
-                Picasso.get().load(item.teams.away.logo).into(secondTeamIcon)
+            setPicture(item.teams.home.logo, firstTeamIcon)
+            setPicture(item.teams.away.logo, secondTeamIcon)
 
             firstTeamName.text = item.teams.home.name
             secondTeamName.text = item.teams.away.name
@@ -176,7 +179,7 @@ class AdapterFavorites(
             }
 
             matchCard.setOnClickListener {
-                //listener.onMatchClicked(item.fixture.id, priorityMap[item.fixture.id]!!)
+                listenerSelect.onMatchClicked(item.fixture.id, priorityMap[item.fixture.id]!!)
             }
         }
 
@@ -187,6 +190,17 @@ class AdapterFavorites(
             val calendar = Calendar.getInstance().apply { time = parsedDate }
             return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(
                 Calendar.MINUTE))
+        }
+
+
+        private fun setPicture(img: String, target: ImageView) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val imgSize = withContext(Dispatchers.IO) {
+                    URL(img).openConnection()
+                }.contentLength
+                if (!(imgSize == size1 || imgSize == size2))
+                    withContext(Dispatchers.Main) { Picasso.get().load(img).into(target) }
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 package com.football.ggbeteurofootball.ui
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.football.ggbeteurofootball.adapters.AdapterMatches
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.FragmentMatchesBinding
-import com.football.ggbeteurofootball.listeners.MatchesListListener
+import com.football.ggbeteurofootball.listeners.DaySelectedListener
+import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
 
-class MatchesFragment : Fragment(), MatchesListListener {
+class MatchesFragment : Fragment(), MatchesSelectedListener, DaySelectedListener {
 
     private lateinit var binding: FragmentMatchesBinding
     private lateinit var adapter: AdapterMatches
@@ -126,7 +125,10 @@ class MatchesFragment : Fragment(), MatchesListListener {
             viewModel.days,
             this,
             viewModel.currentPriorityMap,
-            viewModel.currentDay
+            viewModel.currentDay,
+            this,
+            viewModel.placeholderSize1,
+            viewModel.placeholderSize2
         )
         binding.recyclerMatches.adapter = adapter
         binding.recyclerMatches.layoutManager = layoutManager

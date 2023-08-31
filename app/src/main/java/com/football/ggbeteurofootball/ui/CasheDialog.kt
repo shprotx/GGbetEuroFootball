@@ -1,14 +1,14 @@
 package com.football.ggbeteurofootball.ui
 
 import android.app.Dialog
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.DialogCasheBinding
-import javax.inject.Inject
 
-class CasheDialog: DialogFragment() {
+class CasheDialog(private val editor: Editor) : DialogFragment() {
 
     private val viewModel = MainViewModel
     private lateinit var binding: DialogCasheBinding
@@ -23,6 +23,8 @@ class CasheDialog: DialogFragment() {
         binding.cancel.setOnClickListener { dismiss() }
         binding.delete.setOnClickListener {
             viewModel.favoriteMatches.clear()
+            editor.putString("favorite", "")
+            editor.apply()
             dismiss()
         }
 

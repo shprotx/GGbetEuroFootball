@@ -1,9 +1,7 @@
 package com.football.ggbeteurofootball.listeners
 
-interface MatchesListListener {
+interface DaySelectedListener {
 
     fun onAnotherDaySelected(day: Int)
-
-    fun onMatchClicked(id: Int, type: Int)
 
 }

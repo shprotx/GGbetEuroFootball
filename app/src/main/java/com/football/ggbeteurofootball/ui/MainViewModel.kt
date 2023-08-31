@@ -18,4 +18,6 @@ object MainViewModel: ViewModel() {
 
     var favoriteMatches = mutableListOf<Int>()
 
+    var placeholderSize1 = 0
+    var placeholderSize2 = 0
 }
