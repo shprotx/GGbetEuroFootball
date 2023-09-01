@@ -49,7 +49,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
 
     private fun hidePlaceholder() {
-        binding.textPlaceholder.isVisible = viewModel.favoriteMatches.isEmpty()
+        binding.textPlaceholder.isVisible = viewModel.favoriteMatchesList.isEmpty()
     }
 
 
@@ -167,6 +167,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
             1 -> { viewModel.favoriteMatchesList.filter { item -> priorityMap[item.fixture.id] == 1 } }
             else -> { viewModel.favoriteMatchesList.filter { item -> priorityMap[item.fixture.id] == 2 } }
         }
+        binding.textPlaceholder.isVisible = sortedList.isEmpty()
         viewModel.favoritesAdapter.setNewSortedList(sortedList)
     }
 

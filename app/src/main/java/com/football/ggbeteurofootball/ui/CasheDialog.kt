@@ -3,7 +3,9 @@ package com.football.ggbeteurofootball.ui
 import android.app.Dialog
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.DialogCasheBinding
@@ -27,6 +29,8 @@ class CasheDialog(private val editor: Editor) : DialogFragment() {
             viewModel.favoriteMatches.clear()
             viewModel.favoriteMatchesList.clear()
             viewModel.favoritesAdapter.setNewSortedList(listOf<Response>())
+            val placeholder = requireActivity().findViewById<TextView>(R.id.textPlaceholder)
+            placeholder.isVisible = true
             editor.putString("favorite", "")
             editor.apply()
             dismiss()
