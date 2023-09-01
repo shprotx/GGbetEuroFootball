@@ -13,6 +13,7 @@
 
  - Kotlin
  - Volley
+ - Dagger Hilt
  - Coroutines/Flow
  - Picasso
  - Navigation Component
