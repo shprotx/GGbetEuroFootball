@@ -14,6 +14,7 @@ import com.football.ggbeteurofootball.adapters.AdapterFavorites
 import com.football.ggbeteurofootball.databinding.FragmentFavoritesBinding
 import com.football.ggbeteurofootball.listeners.FavoriteMatchSortListener
 import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
+import com.football.ggbeteurofootball.other.Checker
 
 
 class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelectedListener {
@@ -21,6 +22,7 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
     private lateinit var binding: FragmentFavoritesBinding
     private val viewModel = MainViewModel
     private lateinit var priorityMap: MutableMap<Int, Int>
+    private val checker = Checker
     private val TAG = "FavoritesFragment"
 
     override fun onCreateView(
@@ -35,11 +37,15 @@ class FavoritesFragment : Fragment(), FavoriteMatchSortListener, MatchesSelected
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        hidePlaceholder()
-        findAllFavoriteMatchesInFootballs()
-        recycler()
-        listeners()
+
+        if (checker.checkInternet(requireContext())) {
+            hidePlaceholder()
+            findAllFavoriteMatchesInFootballs()
+            recycler()
+            listeners()
+        } else {
+            findNavController().navigate(R.id.noInternetFragment)
+        }
 
     }
 

@@ -1,8 +1,11 @@
 package com.football.ggbeteurofootball.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences.Editor
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
@@ -12,10 +15,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+
 import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.adapters.AdapterMatchWithStatistic
 import com.football.ggbeteurofootball.adapters.AdapterMatchWithoutStatistic
@@ -25,6 +30,7 @@ import com.football.ggbeteurofootball.data.ItemStatisticBody
 import com.football.ggbeteurofootball.data.ItemStatisticHeader
 import com.football.ggbeteurofootball.databinding.FragmentMatchDetailedBinding
 import com.football.ggbeteurofootball.models.football.Response
+import com.football.ggbeteurofootball.other.Checker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +50,7 @@ class MatchDetailFragment : Fragment() {
     private val viewModel = MainViewModel
     private val response: Response? = initResponse()
     private var isMatchInFavorites = false
+    private val checker = Checker
 
     private val TAG = "MatchDetailFragment"
 
@@ -67,12 +74,15 @@ class MatchDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        someBaseSettings()
+        if (checker.checkInternet(requireContext())) {
+            someBaseSettings()
+            if (viewModel.currentType == 2) showWithStatistic()
+            else showWithH2H()
+            listeners(view)
+        } else {
+            findNavController().navigate(R.id.noInternetFragment)
+        }
 
-        if (viewModel.currentType == 2) showWithStatistic()
-        else showWithH2H()
-
-        listeners(view)
     }
 
 
@@ -296,9 +306,12 @@ class MatchDetailFragment : Fragment() {
         }
 
         binding.shareButton.setOnClickListener {
-            val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
-            startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST)
-
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_CONTACTS), 123132)
+            } else {
+                val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+                startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST)
+            }
         }
     }
     
@@ -385,17 +398,40 @@ class MatchDetailFragment : Fragment() {
 
 
 
+
+    @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == Activity.RESULT_OK) {
             data?.data?.let { contactUri ->
-                val contactId = contactUri.lastPathSegment
-                val smsUri = Uri.parse("smsto:")
-                val smsIntent = Intent(Intent.ACTION_SENDTO, smsUri)
-                smsIntent.putExtra("sms_body", getMessageForSending())
-                smsIntent.data = Uri.parse("smsto:$contactId")
-                startActivity(smsIntent)
+                val cursor = requireActivity().contentResolver.query(contactUri, null, null, null, null)
+                cursor?.use {
+                    if (cursor.moveToFirst()) {
+                        if (cursor.getColumnIndex(ContactsContract.Contacts._ID) > -1) {
+                            val contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                            val phoneCursor = requireActivity().contentResolver.query(
+                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                null,
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                                arrayOf(contactId),
+                                null
+                            )
+                            phoneCursor?.use {
+                                if (phoneCursor.moveToFirst()) {
+                                    val phoneNumber = phoneCursor.getString(
+                                        phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                                    )
+                                    val smsUri = Uri.parse("smsto:$phoneNumber")
+                                    val smsIntent = Intent(Intent.ACTION_SENDTO, smsUri)
+                                    smsIntent.putExtra("sms_body", getMessageForSending())
+                                    startActivity(smsIntent)
+                                }
+                            }
+                        }
+
+                    }
+                }
             }
         }
     }

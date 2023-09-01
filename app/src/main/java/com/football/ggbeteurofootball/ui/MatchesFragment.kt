@@ -14,11 +14,13 @@ import com.football.ggbeteurofootball.R
 import com.football.ggbeteurofootball.databinding.FragmentMatchesBinding
 import com.football.ggbeteurofootball.listeners.DaySelectedListener
 import com.football.ggbeteurofootball.listeners.MatchesSelectedListener
+import com.football.ggbeteurofootball.other.Checker
 
 class MatchesFragment : Fragment(), MatchesSelectedListener, DaySelectedListener {
 
     private lateinit var binding: FragmentMatchesBinding
     private lateinit var adapter: AdapterMatches
+    private val checker = Checker
     private val viewModel = MainViewModel
 
     override fun onCreateView(
@@ -34,9 +36,13 @@ class MatchesFragment : Fragment(), MatchesSelectedListener, DaySelectedListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        collectMatchesForSelectedDay(viewModel.currentDay) // current day position is 3
-        recycler()
-        listeners()
+        if (checker.checkInternet(requireContext())) {
+            collectMatchesForSelectedDay(viewModel.currentDay) // current day position is 3
+            recycler()
+            listeners()
+        } else {
+            findNavController().navigate(R.id.noInternetFragment)
+        }
 
     }
 

@@ -88,9 +88,10 @@ class SplashActivity : AppCompatActivity() {
             }
             viewModel.currentDay = 3
 
-            if (checkInternet())
+            if (checkInternet()) {
                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            else {
+                finish()
+            } else {
                 binding.noInternetText.isVisible = true
                 binding.swipeLayout.isRefreshing = false
                 isAllDataCollected = false
