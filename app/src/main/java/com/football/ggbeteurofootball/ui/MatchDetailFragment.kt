@@ -119,8 +119,8 @@ class MatchDetailFragment : Fragment() {
                 if (it != null) {
                     val list = mutableListOf<ItemStatisticBody>()
 
-                    val headerHomeValue = it.response[0].statistics[9].value?.substring(0, 2)?.toInt()
-                    val headerAwayValue = 100 - headerHomeValue!!
+                    val headerHomeValue = it.response[0].statistics[9].value?.substring(0, 2)?.toInt()?: 0
+                    val headerAwayValue = if (headerHomeValue == 0) 0 else 100 - headerHomeValue
                     val headerItem = ItemStatisticHeader(headerHomeValue, headerAwayValue)
 
                     for (i in 0..15) {

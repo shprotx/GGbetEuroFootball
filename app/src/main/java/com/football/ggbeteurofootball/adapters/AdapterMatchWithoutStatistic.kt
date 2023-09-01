@@ -173,15 +173,7 @@ class AdapterMatchWithoutStatistic(
         }
 
 
-        private fun setPicture(img: String, target: ImageView) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val imgSize = withContext(Dispatchers.IO) {
-                    URL(img).openConnection()
-                }.contentLength
-                if (!(imgSize == size1 || imgSize == size2))
-                    withContext(Dispatchers.Main) { Picasso.get().load(img).into(target) }
-            }
-        }
+
     }
 
 
@@ -198,8 +190,8 @@ class AdapterMatchWithoutStatistic(
         private val awayTeamIndicator = b.secondTeamIndicator
 
         fun bind(item: ItemH2H) {
-            Picasso.get().load(item.homeTeamIcon).into(homeTeamIcon)
-            Picasso.get().load(item.awayTeamIcon).into(awayTeamIcon)
+            setPicture(item.homeTeamIcon, homeTeamIcon)
+            setPicture(item.awayTeamIcon, awayTeamIcon)
             homeTeamScore.text = item.homeTeamScore.toString()
             awayTeamScore.text = item.awayTeamScore.toString()
             date.text = item.date
@@ -235,6 +227,19 @@ class AdapterMatchWithoutStatistic(
                 title.textSize = 18f
                 title.typeface = ResourcesCompat.getFont(context, R.font.roboto_600)
             }
+        }
+    }
+
+
+
+
+    private fun setPicture(img: String, target: ImageView) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val imgSize = withContext(Dispatchers.IO) {
+                URL(img).openConnection()
+            }.contentLength
+            if (!(imgSize == size1 || imgSize == size2))
+                withContext(Dispatchers.Main) { Picasso.get().load(img).into(target) }
         }
     }
 }
