@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/matchesFragment"
-        android:name="com.football.ggbeteurofootball.ui.MatchesFragment"
+        android:name="fitnesscoach.workoutplanner.ggbig.ui.MatchesFragment"
         android:label="      GG Matches"
         tools:layout="@layout/fragment_matches" />
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.football.ggbeteurofootball.ui.FavoritesFragment"
+        android:name="fitnesscoach.workoutplanner.ggbig.ui.FavoritesFragment"
         android:label="FavoritesFragment" />
     <fragment
         android:id="@+id/matchDetailFragment"
-        android:name="com.football.ggbeteurofootball.ui.MatchDetailFragment"
+        android:name="fitnesscoach.workoutplanner.ggbig.ui.MatchDetailFragment"
         android:label="fragment_match_detailed"
         tools:layout="@layout/fragment_match_detailed" />
     <fragment
         android:id="@+id/noInternetFragment"
-        android:name="com.football.ggbeteurofootball.ui.NoInternetFragment"
+        android:name="fitnesscoach.workoutplanner.ggbig.ui.NoInternetFragment"
         android:label="fragment_no_internet"
         tools:layout="@layout/fragment_no_internet" />
 </navigation>

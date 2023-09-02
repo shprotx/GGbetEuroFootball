@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.football.ggbeteurofootball"
+    namespace = "fitnesscoach.workoutplanner.ggbig"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.football.ggbeteurofootball"
+        applicationId = "fitnesscoach.workoutplanner.ggbig"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
